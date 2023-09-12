@@ -14,7 +14,7 @@ namespace Processor {
     class Processor {
     private:
         Word program_counter; // Program Counter
-        Word stack_register; // Stack Register
+        Word stack_pointer; // Stack Pointer
 
         std::map<char, Byte> registers = { // Registers
                 {'A', 0},
@@ -23,27 +23,29 @@ namespace Processor {
         };
 
         std::map<char, bool> processor_status = { // Processor Status Register
-                {'C', false},
-                {'Z', false},
-                {'I', false},
-                {'D', false},
-                {'B', false},
-                {'V', false},
-                {'N', false}
+                {'C', true},
+                {'Z', true},
+                {'I', true},
+                {'D', true},
+                {'B', true},
+                {'V', true},
+                {'N', true}
         };
     public:
         Processor();
         ~Processor();
 
         Word getProgramCounter() const;
-        Word getStackRegister() const;
+        Word getStackPointer() const;
         Byte getRegisterValue(const char&) const;
         bool getProcessorStatus(const char&) const;
 
         void setProgramCounter(const Word&);
-        void setStackRegister(const Word&);
+        void setStackPointer(const Word&);
         void setRegisterValue(const char&, const Byte&);
         void setProcessorStatus(const char&, const bool&);
+
+        void resetCPU();
     };
 }
 

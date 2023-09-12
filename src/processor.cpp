@@ -1,6 +1,9 @@
 #include "processor.h"
+#include <iostream>
 
-Processor::Processor::Processor() {}
+Processor::Processor::Processor() {
+    resetCPU();
+}
 
 Processor::Processor::~Processor() {}
 
@@ -18,8 +21,8 @@ Processor::Word Processor::Processor::getProgramCounter() const {
 *
 * @return Current stack register value (type Processor::Word/uint8_t).
 */
-Processor::Word Processor::Processor::getStackRegister() const {
-    return stack_register;
+Processor::Word Processor::Processor::getStackPointer() const {
+    return stack_pointer;
 }
 
 /**
@@ -58,8 +61,8 @@ void Processor::Processor::setProgramCounter(const Word& value) {
 *
 * @param values Value to set in stack register.
 */
-void Processor::Processor::setStackRegister(const Word &value) {
-    stack_register = value;
+void Processor::Processor::setStackPointer(const Word &value) {
+    stack_pointer = value;
 }
 
 /**
@@ -84,5 +87,22 @@ void Processor::Processor::setRegisterValue(const char &key, const Byte &value) 
 void Processor::Processor::setProcessorStatus(const char &key, const bool &value) {
     processor_status.at(key);
     processor_status[key] = value;
+}
+
+/**
+* Reset CPU
+*/
+void Processor::Processor::resetCPU() {
+
+    setProgramCounter(0xFFFC); // Reset Vector Address
+    setStackPointer(0x0100); // First Stack Access Address
+
+    for(const auto& pair : registers) { // Reset All General Purpose Registers
+        setRegisterValue(pair.first, 0x00);
+    }
+
+    for(const auto& pair : processor_status) { // Reset All Status Register Bits
+        setProcessorStatus(pair.first, false);
+    }
 }
 
