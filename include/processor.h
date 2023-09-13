@@ -84,6 +84,7 @@ namespace Processor {
 
         void resetCPU();
         Byte fetch(Dword&, const Dword&);
+        Byte readByte(Byte, Dword&, const Dword&);
         void execute(Dword);
     };
 }

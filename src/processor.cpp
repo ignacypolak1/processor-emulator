@@ -9,7 +9,7 @@ Processor::Processor::Processor() {
 //            {INS_LDA_ABSOLUTE, &Processor::INS_LDA_ABSOLUTE_HANDLE},
 //            {INS_LDA_ABSOLUTE_X, &Processor::INS_LDA_ABSOLUTE_X_HANDLE},
 //            {INS_LDA_ABSOLUTE_Y, &Processor::INS_LDA_ABSOLUTE_Y_HANDLE},
-//            {INS_LDA_ZEROPAGE, &Processor::INS_LDA_ZEROPAGE_HANDLE},
+            {INS_LDA_ZEROPAGE, &Processor::INS_LDA_ZEROPAGE_HANDLE},
 //            {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
 //            {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
 //            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE}
@@ -138,8 +138,9 @@ void Processor::Processor::resetCPU() {
         setProcessorStatus(pair.first, 0x00);
     }
 
-    memory[0xFFFC] = INS_LDA_IMMEDIATE; //TODO: This is debug line, remove later
-    memory[0xFFFD] = 0x10; //TODO: This is debug line, remove later
+    memory[0xFFFC] = INS_LDA_ZEROPAGE; //TODO: This is debug line, remove later
+    memory[0xFFFD] = 0x42; //TODO: This is debug line, remove later
+    memory[0x0042] = 0x16; //TODO: This is debug line, remove later
 }
 
 /**
@@ -155,6 +156,15 @@ Processor::Byte Processor::Processor::fetch(Dword &cycles, const Dword &requeste
         printf("Cycle %i: Fetch: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, instruction, getProgramCounter());
     #endif
     program_counter++;
+    return instruction;
+}
+
+Processor::Byte Processor::Processor::readByte(Byte address, Dword &cycles, const Dword &requested_cycles) {
+    Byte instruction = memory[address];
+    cycles--;
+    #ifdef DEBUG
+        printf("Cycle %i: Read Byte: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, instruction, address);
+    #endif
     return instruction;
 }
 

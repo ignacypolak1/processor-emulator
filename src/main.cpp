@@ -3,10 +3,10 @@
 int main() {
     Processor::Processor *processor = new Processor::Processor();
 
-    printf("Register A value: 0x%04X\n", processor->getRegisterValue('A'));
+    printf("Accumulator value: 0x%04X\n", processor->getRegisterValue('A'));
     processor->resetCPU();
-    processor->execute(2);
-    printf("Register A value: 0x%04X\n", processor->getRegisterValue('A'));
+    processor->execute(3);
+    printf("Accumulator value: 0x%04X\n", processor->getRegisterValue('A'));
 
     delete processor;
     return 0;
