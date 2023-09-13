@@ -3,8 +3,8 @@
 int main() {
     Processor::Processor *processor = new Processor::Processor();
 
-    printf("%x\n", processor->getStackPointer());
-    printf("%x\n", processor->getProgramCounter());
+    processor->resetCPU();
+    processor->execute(5);
 
     delete processor;
     return 0;
