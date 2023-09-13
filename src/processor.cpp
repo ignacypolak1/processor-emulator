@@ -150,6 +150,7 @@ void Processor::Processor::resetCPU() {
 * Fetch byte of instruction from processor memory.
 *
 * @param cycles Remaining cycles of processor reference.
+* @param requested_cycles Entire number of requested cycles
 * @return Byte of instruction from address of current program counter value.
 */
 Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requested_cycles) {
@@ -166,6 +167,7 @@ Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requ
 * Fetch word of instruction from processor memory.
 *
 * @param cycles Remaining cycles of processor reference.
+* @param requested_cycles Entire number of requested cycles
 * @return Word of instruction from address and address+1 of current program counter value.
 */
 Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requested_cycles) {
@@ -183,12 +185,15 @@ Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requ
 }
 
 /**
-* Fetch word of instruction from processor memory.
+* Write word in processor memory.
 *
-* @param cycles Remaining cycles of processor reference.
+* @param address Address to write in processor memory
+* @param value Value to write in processor memory
+* @param cycles Remaining cycles of processor reference
+* @param reqested_cycles Entire number of requested cycles
 * @return Word of instruction from address and address+1 of current program counter value.
 */
-void Processor::Processor::writeWord(const Dword &address, Word value, Dword &cycles, const Dword &reqested_cycles) {
+void Processor::Processor::writeWord(const Word &address, Word value, Dword &cycles, const Dword &reqested_cycles) {
 
     memory[address] = value & 0x00FF;
     memory[address+1] = (value << 8);
@@ -198,6 +203,14 @@ void Processor::Processor::writeWord(const Dword &address, Word value, Dword &cy
     cycles-=2;
 }
 
+/**
+* Fetch word of instruction from processor memory.
+*
+* @param address Address in memory to read byte from
+* @param cycles Remaining cycles of processor reference.
+* @param reqested_cycles Entire number of requested cycles
+* @return Word of instruction from address and address+1 of current program counter value.
+*/
 Processor::Byte Processor::Processor::readByte(Byte address, Dword &cycles, const Dword &requested_cycles) {
     Byte instruction = memory[address];
     #ifdef DEBUG

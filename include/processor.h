@@ -88,7 +88,7 @@ namespace Processor {
         Byte fetchByte(Dword &cycles, const Dword &requested_cycles);
         Word fetchWord(Dword&, const Dword&);
         Byte readByte(Byte, Dword&, const Dword&);
-        void writeWord(const Dword&, Word, Dword&, const Dword&);
+        void writeWord(const Word&, Word, Dword&, const Dword&);
         void execute(Dword);
     };
 }
