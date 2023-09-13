@@ -10,7 +10,7 @@ Processor::Processor::Processor() {
 //            {INS_LDA_ABSOLUTE_X, &Processor::INS_LDA_ABSOLUTE_X_HANDLE},
 //            {INS_LDA_ABSOLUTE_Y, &Processor::INS_LDA_ABSOLUTE_Y_HANDLE},
             {INS_LDA_ZEROPAGE, &Processor::INS_LDA_ZEROPAGE_HANDLE},
-//            {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
+            {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
 //            {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
 //            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE}
     };
@@ -138,9 +138,10 @@ void Processor::Processor::resetCPU() {
         setProcessorStatus(pair.first, 0x00);
     }
 
-    memory[0xFFFC] = INS_LDA_ZEROPAGE; //TODO: This is debug line, remove later
+    memory[0xFFFC] = INS_LDA_ZEROPAGE_X; //TODO: This is debug line, remove later
     memory[0xFFFD] = 0x42; //TODO: This is debug line, remove later
-    memory[0x0042] = 0x16; //TODO: This is debug line, remove later
+    memory[0xFFFE] = 0x16; //TODO: This is debug line, remove later
+    memory[0x58] = 0x24;
 }
 
 /**
