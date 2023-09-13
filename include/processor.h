@@ -17,6 +17,7 @@
 #define INS_LDA_ZEROPAGE_X 0xB5
 #define INS_LDA_INDEXED_INDIRECT 0xA1
 #define INS_LDA_INDIRECT_INDEXED 0xB1
+#define INS_JSR 0x20
 
 
 namespace Processor {
@@ -32,7 +33,7 @@ namespace Processor {
         static constexpr Dword MAX_MEMORY = 1024 * 64;
         Byte data[MAX_MEMORY];
         void initialize();
-        Byte& operator [](Dword address);
+        Byte& operator [](Word address);
     };
 
     class Processor {
@@ -67,6 +68,7 @@ namespace Processor {
         void INS_LDA_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
         void INS_LDA_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
         void INS_LDA_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
+        void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
         Processor();
@@ -83,8 +85,10 @@ namespace Processor {
         void setProcessorStatus(const char&, const Byte&);
 
         void resetCPU();
-        Byte fetch(Dword&, const Dword&);
+        Byte fetchByte(Dword &cycles, const Dword &requested_cycles);
+        Word fetchWord(Dword&, const Dword&);
         Byte readByte(Byte, Dword&, const Dword&);
+        void writeWord(const Dword&, Word, Dword&, const Dword&);
         void execute(Dword);
     };
 }

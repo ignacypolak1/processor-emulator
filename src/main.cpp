@@ -5,7 +5,7 @@ int main() {
 
     printf("Accumulator value: 0x%04X\n", processor->getRegisterValue('A'));
     processor->resetCPU();
-    processor->execute(4);
+    processor->execute(8);
     printf("Accumulator value: 0x%04X\n", processor->getRegisterValue('A'));
 
     delete processor;

@@ -6,7 +6,7 @@
 
 
 void Processor::Processor::INS_LDA_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte value = fetch(cycles, requested_cycles);
+    Byte value = fetchByte(cycles, requested_cycles);
     #ifdef DEBUG
         printf("Cycle %i: INS_LDA_IMMEDIATE: Found first argument: 0x%04X\n", requested_cycles-cycles, value);
     #endif
@@ -53,7 +53,7 @@ void Processor::Processor::INS_LDA_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
 
 }
 void Processor::Processor::INS_LDA_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte address = fetch(cycles, requested_cycles); // Get zero page address
+    Byte address = fetchByte(cycles, requested_cycles); // Get zero page address
     #ifdef DEBUG
         printf("Cycle %i: INS_LDA_ZEROPAGE: Found first argument: 0x%04X\n", requested_cycles-cycles, address);
     #endif
@@ -98,12 +98,12 @@ void Processor::Processor::INS_LDA_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
 void Processor::Processor::INS_LDA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte address = 0x0000;
 
-    Byte first_address = fetch(cycles, requested_cycles); // Get zero page address
+    Byte first_address = fetchByte(cycles, requested_cycles); // Get zero page address
     #ifdef DEBUG
         printf("Cycle %i: INS_LDA_ZEROPAGE_X: Found first argument: 0x%04X\n", requested_cycles-cycles, first_address);
     #endif
 
-    Byte second_address = fetch(cycles, requested_cycles); // Get zero page address
+    Byte second_address = fetchByte(cycles, requested_cycles); // Get zero page address
     #ifdef DEBUG
         printf("Cycle %i: INS_LDA_ZEROPAGE_X: Found second argument: 0x%04X\n", requested_cycles-cycles, second_address);
     #endif
@@ -151,4 +151,20 @@ void Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
 }
 void Processor::Processor::INS_LDA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
 
+}
+
+void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word subroutineAddress = fetchWord(cycles, requested_cycles);
+    #ifdef DEBUG
+        printf("Cycle %i: INS_LDA_JSR: Found first word argument: 0x%04X\n", requested_cycles-cycles, subroutineAddress);
+    #endif
+    writeWord(stack_pointer, program_counter-1, cycles, requested_cycles);
+    #ifdef DEBUG
+        printf("Cycle %i: INS_LDA_JSR: Current program counter address (0x%04X) saved on stack addresses (0x%04X and 0x%04X)\n", requested_cycles-cycles, program_counter, stack_pointer, stack_pointer+1);
+    #endif
+    program_counter = subroutineAddress;
+    #ifdef DEBUG
+        printf("Cycle %i: INS_LDA_JSR: Current program counter set to subroutine address (0x%04X)\n", requested_cycles-cycles, subroutineAddress);
+    #endif
+    cycles--;
 }

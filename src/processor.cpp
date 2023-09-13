@@ -12,7 +12,8 @@ Processor::Processor::Processor() {
             {INS_LDA_ZEROPAGE, &Processor::INS_LDA_ZEROPAGE_HANDLE},
             {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
 //            {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
-//            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE}
+//            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE},
+            {INS_JSR, &Processor::INS_JSR_HANDLE}
     };
 }
 
@@ -105,7 +106,7 @@ void Processor::Processor::setProcessorStatus(const char &key, const Byte &value
 *
 * @param address Address to get byte of instruction from.
 */
-Processor::Byte& Processor::Memory::operator [](Dword address) {
+Processor::Byte& Processor::Memory::operator [](Word address) {
     if(address < MAX_MEMORY) {
         return data[address];
     }
@@ -138,10 +139,11 @@ void Processor::Processor::resetCPU() {
         setProcessorStatus(pair.first, 0x00);
     }
 
-    memory[0xFFFC] = INS_LDA_ZEROPAGE_X; //TODO: This is debug line, remove later
+    memory[0xFFFC] = INS_JSR; //TODO: This is debug line, remove later
     memory[0xFFFD] = 0x42; //TODO: This is debug line, remove later
-    memory[0xFFFE] = 0x16; //TODO: This is debug line, remove later
-    memory[0x58] = 0x24;
+    memory[0xFFFE] = 0x42; //TODO: This is debug line, remove later
+    memory[0x4242] = INS_LDA_IMMEDIATE; //TODO: This is debug line, remove later
+    memory[0x4243] = 0x72; //TODO: This is debug line, remove later
 }
 
 /**
@@ -150,22 +152,58 @@ void Processor::Processor::resetCPU() {
 * @param cycles Remaining cycles of processor reference.
 * @return Byte of instruction from address of current program counter value.
 */
-Processor::Byte Processor::Processor::fetch(Dword &cycles, const Dword &requested_cycles) {
-    Byte instruction = memory[program_counter];
-    cycles--;
+Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requested_cycles) {
+    Byte byte = memory[program_counter];
     #ifdef DEBUG
-        printf("Cycle %i: Fetch: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, instruction, getProgramCounter());
+        printf("Cycle %i: Fetch Byte: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, byte, getProgramCounter());
     #endif
+    cycles--;
     program_counter++;
-    return instruction;
+    return byte;
+}
+
+/**
+* Fetch word of instruction from processor memory.
+*
+* @param cycles Remaining cycles of processor reference.
+* @return Word of instruction from address and address+1 of current program counter value.
+*/
+Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requested_cycles) {
+    Word word = 0x0000;
+
+    word = (word & 0xFF00) | memory[program_counter];
+    word = (word & 0x00FF) | (memory[program_counter+1] << 8);
+
+    #ifdef DEBUG
+        printf("Cycle %i: Fetch Word: Read word value: 0x%04X, addresses: 0x%04X and 0x%04X\n", requested_cycles-cycles, word, getProgramCounter(), getProgramCounter()+1);
+    #endif
+    cycles-=2;
+    program_counter+=2;
+    return word;
+}
+
+/**
+* Fetch word of instruction from processor memory.
+*
+* @param cycles Remaining cycles of processor reference.
+* @return Word of instruction from address and address+1 of current program counter value.
+*/
+void Processor::Processor::writeWord(const Dword &address, Word value, Dword &cycles, const Dword &reqested_cycles) {
+
+    memory[address] = value & 0x00FF;
+    memory[address+1] = (value << 8);
+    #ifdef DEBUG
+        printf("Cycle %i: Write Word: Word 0x%04X written under addresses 0x%04X and 0x%04X\n", reqested_cycles-cycles, value, address, address+1);
+    #endif
+    cycles-=2;
 }
 
 Processor::Byte Processor::Processor::readByte(Byte address, Dword &cycles, const Dword &requested_cycles) {
     Byte instruction = memory[address];
-    cycles--;
     #ifdef DEBUG
         printf("Cycle %i: Read Byte: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, instruction, address);
     #endif
+    cycles--;
     return instruction;
 }
 
@@ -179,7 +217,7 @@ void Processor::Processor::execute(Dword cycles) {
 
     while(cycles > 0)
     {
-        Byte instruction = fetch(cycles, cycles_num);
+        Byte instruction = fetchByte(cycles, cycles_num);
         auto it = instructionMap.find(instruction);
         if (it != instructionMap.end())
         {
@@ -193,8 +231,8 @@ void Processor::Processor::execute(Dword cycles) {
             #ifdef DEBUG
                 printf("Cycle %i: Execute: Unknown opcode: 0x%04X\n", cycles_num-cycles, instruction);
             #endif
-            }
             break;
+            }
         }
     }
 

@@ -11,6 +11,8 @@ file(GLOB SOURCE_FILES src/*.cpp)
 add_executable(processor-emulator ${SOURCE_FILES})
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
+    set_target_properties(processor-emulator PROPERTIES VS_JUST_MY_CODE_DEBUGGING YES)
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -Og -O0")
     add_definitions(-DDEBUG)
 else ()
     # something else later
