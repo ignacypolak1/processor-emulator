@@ -1,9 +1,19 @@
-#include "processor.h"
-#include "instructions.h"
 #include <algorithm>
+#include "instructions.h"
 
 Processor::Processor::Processor() {
     resetCPU();
+
+    instructionMap = {
+            {INS_LDA_IMMEDIATE, &Processor::INS_LDA_IMMEDIATE_HANDLE},
+//            {INS_LDA_ABSOLUTE, &Processor::INS_LDA_ABSOLUTE_HANDLE},
+//            {INS_LDA_ABSOLUTE_X, &Processor::INS_LDA_ABSOLUTE_X_HANDLE},
+//            {INS_LDA_ABSOLUTE_Y, &Processor::INS_LDA_ABSOLUTE_Y_HANDLE},
+//            {INS_LDA_ZEROPAGE, &Processor::INS_LDA_ZEROPAGE_HANDLE},
+//            {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
+//            {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
+//            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE}
+    };
 }
 
 Processor::Processor::~Processor() {}
@@ -91,29 +101,11 @@ void Processor::Processor::setProcessorStatus(const char &key, const Byte &value
 }
 
 /**
-* Reset CPU
-*/
-void Processor::Processor::resetCPU() {
-
-    setProgramCounter(0xFFFC); // Reset Vector Address
-    setStackPointer(0x0100); // First Stack Access Address
-    memory.initialize(); // Initialize Memory
-
-    for(const auto& pair : registers) { // Reset All General Purpose Registers
-        setRegisterValue(pair.first, 0x00);
-    }
-
-    for(const auto& pair : processor_status) { // Reset All Status Register Bits
-        setProcessorStatus(pair.first, 0x00);
-    }
-}
-
-/**
 * Operator override for getting byte of instruction from processor memory
 *
 * @param address Address to get byte of instruction from.
 */
-Processor::Byte Processor::Memory::operator [](Dword address) const {
+Processor::Byte& Processor::Memory::operator [](Dword address) {
     if(address < MAX_MEMORY) {
         return data[address];
     }
@@ -130,15 +122,39 @@ void Processor::Memory::initialize() {
 }
 
 /**
+* Reset CPU
+*/
+void Processor::Processor::resetCPU() {
+
+    setProgramCounter(0xFFFC); // Reset Vector Address
+    setStackPointer(0x0100); // First Stack Access Address
+    memory.initialize(); // Initialize Memory
+
+    for(const auto& pair : registers) { // Reset All General Purpose Registers
+        setRegisterValue(pair.first, 0x00);
+    }
+
+    for(const auto& pair : processor_status) { // Reset All Status Register Bits
+        setProcessorStatus(pair.first, 0x00);
+    }
+
+    memory[0xFFFC] = INS_LDA_IMMEDIATE; //TODO: This is debug line, remove later
+    memory[0xFFFD] = 0x10; //TODO: This is debug line, remove later
+}
+
+/**
 * Fetch byte of instruction from processor memory.
 *
 * @param cycles Remaining cycles of processor reference.
 * @return Byte of instruction from address of current program counter value.
 */
-Processor::Byte Processor::Processor::fetch(Dword &cycles) {
+Processor::Byte Processor::Processor::fetch(Dword &cycles, const Dword &requested_cycles) {
     Byte instruction = memory[program_counter];
-    program_counter++;
     cycles--;
+    #ifdef DEBUG
+        printf("Cycle %i: Fetch: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, instruction, getProgramCounter());
+    #endif
+    program_counter++;
     return instruction;
 }
 
@@ -148,11 +164,28 @@ Processor::Byte Processor::Processor::fetch(Dword &cycles) {
 * @param cycles Number of cycles for instruction execution.
 */
 void Processor::Processor::execute(Dword cycles) {
+    Dword cycles_num = cycles;
+
     while(cycles > 0)
     {
-        Byte instruction = fetch(cycles);
-        printf("%x\n", instruction);
+        Byte instruction = fetch(cycles, cycles_num);
+        auto it = instructionMap.find(instruction);
+        if (it != instructionMap.end())
+        {
+            #ifdef DEBUG
+                printf("Cycle %i: Execute: Found instruction with opcode: 0x%04X\n", cycles_num-cycles, instruction);
+            #endif
+            InstructionFunction handler = it->second;
+            (this->*handler)(cycles, cycles_num);
+        }
+        else {
+            #ifdef DEBUG
+                printf("Cycle %i: Execute: Unknown opcode: 0x%04X\n", cycles_num-cycles, instruction);
+            #endif
+            }
+            break;
+        }
     }
-}
+
 
 

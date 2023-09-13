@@ -9,3 +9,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Include source files
 file(GLOB SOURCE_FILES src/*.cpp)
 add_executable(processor-emulator ${SOURCE_FILES})
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    add_definitions(-DDEBUG)
+else ()
+    # something else later
+endif()
