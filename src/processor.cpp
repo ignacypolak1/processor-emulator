@@ -143,7 +143,7 @@ void Processor::Processor::resetCPU() {
     memory[0xFFFD] = 0x42; //TODO: This is debug line, remove later
     memory[0xFFFE] = 0x42; //TODO: This is debug line, remove later
     memory[0x4242] = INS_LDA_IMMEDIATE; //TODO: This is debug line, remove later
-    memory[0x4243] = 0x72; //TODO: This is debug line, remove later
+    memory[0x4243] = 0x00; //TODO: This is debug line, remove later
 }
 
 /**

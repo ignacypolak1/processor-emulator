@@ -16,6 +16,10 @@ void Processor::Processor::INS_LDA_IMMEDIATE_HANDLE(Dword &cycles, const Dword &
                 printf("Cycle %i: INS_LDA_IMMEDIATE: Setting Zero Flag\n", requested_cycles-cycles);
         #endif
         setProcessorStatus('Z', 1); // Set Zero Flag, if value is 0
+        #ifdef DEBUG
+                printf("Cycle %i: INS_LDA_IMMEDIATE: Resetting Negative Flag\n", requested_cycles-cycles);
+        #endif
+        setProcessorStatus('N', 0); // Reset Negative Flag, if value loaded value is non negative
     }
 
     else {
@@ -67,6 +71,10 @@ void Processor::Processor::INS_LDA_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
                 printf("Cycle %i: INS_LDA_ZEROPAGE: Setting Zero Flag\n", requested_cycles-cycles);
         #endif
         setProcessorStatus('Z', 1); // Set Zero Flag, if value is 0
+        #ifdef DEBUG
+                printf("Cycle %i: INS_LDA_IMMEDIATE: Resetting Negative Flag\n", requested_cycles-cycles);
+        #endif
+        setProcessorStatus('N', 0); // Reset Negative Flag, if value loaded value is non negative
     }
 
     else {
@@ -119,6 +127,10 @@ void Processor::Processor::INS_LDA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
                 printf("Cycle %i: INS_LDA_ZEROPAGE_X: Setting Zero Flag\n", requested_cycles-cycles);
         #endif
         setProcessorStatus('Z', 1); // Set Zero Flag, if value is 0
+        #ifdef DEBUG
+                printf("Cycle %i: INS_LDA_IMMEDIATE: Resetting Negative Flag\n", requested_cycles-cycles);
+        #endif
+        setProcessorStatus('N', 0); // Reset Negative Flag, if value loaded value is non negative
     }
 
     else {
