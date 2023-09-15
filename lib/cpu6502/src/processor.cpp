@@ -40,7 +40,7 @@ Processor::Word Processor::Processor::getStackPointer() const {
 /**
 * Get current value of general purpose register by register name.
 *
-* @param key Register name
+* @param key Register name.
 * @return Current general purpose register value (type Processor::Word/uint8_t).
 * @throws std::out_of_range Thrown if key doesn't exist.
 */
@@ -51,7 +51,7 @@ Processor::Byte Processor::Processor::getRegisterValue(const char& key) const {
 /**
 * Get current state of specific bit in processor status register.
 *
-* @param key Status bit name
+* @param key Status bit name.
 * @return Current state of specific bit in processor status register (type bool, true for set, false for unset).
 * @throws std::out_of_range Thrown if key doesn't exist.
 */
@@ -102,7 +102,7 @@ void Processor::Processor::setProcessorStatus(const char &key, const Byte &value
 }
 
 /**
-* Operator override for getting byte of instruction from processor memory
+* Operator override for getting byte of instruction from processor memory.
 *
 * @param address Address to get byte of instruction from.
 */
@@ -116,14 +116,14 @@ Processor::Byte& Processor::Memory::operator [](Word address) {
 }
 
 /**
-* Initialize of processor memory (fill entire processor memory with 0's)
+* Initialize of processor memory (fill entire processor memory with 0's).
 */
 void Processor::Memory::initialize() {
     std::fill(data, data+MAX_MEMORY, 0);
 }
 
 /**
-* Reset CPU
+* Reset CPU.
 */
 void Processor::Processor::resetCPU() {
 
@@ -149,7 +149,7 @@ std::array<Processor::Byte, MAX_MEMORY> Processor::Processor::getMemory() const 
 * Fetch byte of instruction from processor memory.
 *
 * @param cycles Remaining cycles of processor reference.
-* @param requested_cycles Entire number of requested cycles
+* @param requested_cycles Entire number of requested cycles.
 * @return Byte of instruction from address of current program counter value.
 */
 Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requested_cycles) {
@@ -166,7 +166,7 @@ Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requ
 * Fetch word of instruction from processor memory.
 *
 * @param cycles Remaining cycles of processor reference.
-* @param requested_cycles Entire number of requested cycles
+* @param requested_cycles Entire number of requested cycles.
 * @return Word of instruction from address and address+1 of current program counter value.
 */
 Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requested_cycles) {
@@ -186,10 +186,10 @@ Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requ
 /**
 * Write word in processor memory.
 *
-* @param address Address to write in processor memory
-* @param value Value to write in processor memory
-* @param cycles Remaining cycles of processor reference
-* @param reqested_cycles Entire number of requested cycles
+* @param address Address to write in processor memory.
+* @param value Value to write in processor memory.
+* @param cycles Remaining cycles of processor reference.
+* @param reqested_cycles Entire number of requested cycles.
 * @return Word of instruction from address and address+1 of current program counter value.
 */
 void Processor::Processor::writeWord(const Word &address, Word value, Dword &cycles, const Dword &reqested_cycles) {
@@ -205,9 +205,9 @@ void Processor::Processor::writeWord(const Word &address, Word value, Dword &cyc
 /**
 * Fetch word of instruction from processor memory.
 *
-* @param address Address in memory to read byte from
+* @param address Address in memory to read byte from.
 * @param cycles Remaining cycles of processor reference.
-* @param reqested_cycles Entire number of requested cycles
+* @param reqested_cycles Entire number of requested cycles.
 * @return Word of instruction from address and address+1 of current program counter value.
 */
 Processor::Byte Processor::Processor::readByte(const Word &address, Dword &cycles, const Dword &requested_cycles) {
@@ -247,9 +247,22 @@ void Processor::Processor::execute(Dword cycles) {
             }
         }
     }
+/**
+* Set byte in memory under given address.
+*
+* @param address Address in memory to write byte.
+* @param Byte Byte to write.
+*/
 void Processor::Processor::setMemoryByte(const Word &address, const Byte value) {
     memory[address] = value;
 }
+
+/**
+* Set word in memory under given address and address + 1.
+*
+* @param address Address in memory to write word.
+* @param Byte Word to write.
+*/
 void Processor::Processor::setMemoryWord(const Word &address, const Word value) {
     memory[address] = (value & 0x00FF);
     memory[address + 1] = (value >> 8);
