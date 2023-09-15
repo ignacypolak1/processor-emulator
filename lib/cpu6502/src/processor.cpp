@@ -201,7 +201,7 @@ Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requ
 void Processor::Processor::writeWord(const Word &address, Word value, Dword &cycles, const Dword &reqested_cycles) {
 
     memory[address] = value & 0x00FF;
-    memory[address+1] = (value << 8);
+    memory[address+1] = (value >> 8);
     #ifdef DEBUG
         printf("Cycle %i: Write Word: Word 0x%04X written under addresses 0x%04X and 0x%04X\n", reqested_cycles-cycles, value, address, address+1);
     #endif
@@ -253,6 +253,13 @@ void Processor::Processor::execute(Dword cycles) {
             }
         }
     }
+void Processor::Processor::setMemoryByte(const Word &address, const Byte value) {
+    memory[address] = value;
+}
+void Processor::Processor::setMemoryWord(const Word &address, const Word value) {
+    memory[address] = (value & 0x00FF);
+    memory[address + 1] = (value >> 8);
+}
 
 
 

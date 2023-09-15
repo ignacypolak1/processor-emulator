@@ -111,7 +111,8 @@ void Processor::Processor::INS_LDA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
         printf("Cycle %i: INS_LDA_ZEROPAGE_X: Found first argument: 0x%04X\n", requested_cycles-cycles, first_address);
     #endif
 
-    Byte second_address = fetchByte(cycles, requested_cycles); // Get zero page address
+    Byte second_address = getRegisterValue('X'); // Get X register value
+    cycles--;
     #ifdef DEBUG
         printf("Cycle %i: INS_LDA_ZEROPAGE_X: Found second argument: 0x%04X\n", requested_cycles-cycles, second_address);
     #endif

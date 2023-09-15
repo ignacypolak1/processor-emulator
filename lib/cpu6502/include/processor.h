@@ -92,6 +92,9 @@ namespace Processor {
         Byte readByte(Byte, Dword&, const Dword&);
         void writeWord(const Word&, Word, Dword&, const Dword&);
         void execute(Dword);
+
+        void setMemoryByte(const Word&, const Byte);
+        void setMemoryWord(const Word&, const Word);
     };
 }
 
