@@ -89,7 +89,10 @@ namespace Processor {
         void resetCPU();
         Byte fetchByte(Dword &cycles, const Dword &requested_cycles);
         Word fetchWord(Dword&, const Dword&);
+
         Byte readByte(const Word&, Dword&, const Dword&);
+        Word readWord(const Word&, Dword&, const Dword&);
+
         void writeWord(const Word&, Word, Dword&, const Dword&);
         void execute(Dword);
 

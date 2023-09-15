@@ -314,10 +314,12 @@ void Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
         cycles--; // If address + regXValue crossed page in which base address is, decrement cycles by 1
     }
 
-    Byte value = readByte(address + regXValue, cycles, requested_cycles);
-    cycles-=3; //TODO: Calculate why it happens
+    Word valueAddress = readWord(address + regXValue, cycles, requested_cycles);
+    Byte value = readByte(valueAddress, cycles, requested_cycles);
+    cycles--; //TODO: Find why it's necessary
+
     #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, address, value);
+        printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, valueAddress, value);
     #endif
 
     if(!value) {

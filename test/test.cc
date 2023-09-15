@@ -289,11 +289,13 @@ TEST(Processor, INS_LDA_INDEXED_INDIRECT_TEST) {
     processor->setMemoryByte(0xFFFC, 0xA1);
     processor->setMemoryWord(0xFFFD, 0x32);
     processor->setRegisterValue('X', 0x02);
-    processor->setMemoryByte(0x34, 0x23);
+    processor->setMemoryByte(0x34, 0x22);
+    processor->setMemoryByte(0x35, 0x23);
+    processor->setMemoryByte(0x2322, 0x46);
 
     processor->execute(6);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x23) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x46) << "Wrong accumulator status, operation failed";
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
     EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
 
@@ -302,7 +304,9 @@ TEST(Processor, INS_LDA_INDEXED_INDIRECT_TEST) {
     processor->setMemoryByte(0xFFFC, 0xA1);
     processor->setMemoryWord(0xFFFD, 0x32);
     processor->setRegisterValue('X', 0x02);
-    processor->setMemoryByte(0x34, 0x00);
+    processor->setMemoryByte(0x34, 0x22);
+    processor->setMemoryByte(0x35, 0x23);
+    processor->setMemoryByte(0x2322, 0x00);
 
     processor->execute(6);
 
@@ -315,7 +319,9 @@ TEST(Processor, INS_LDA_INDEXED_INDIRECT_TEST) {
     processor->setMemoryByte(0xFFFC, 0xA1);
     processor->setMemoryWord(0xFFFD, 0x32);
     processor->setRegisterValue('X', 0x02);
-    processor->setMemoryByte(0x34, 0xFB);
+    processor->setMemoryByte(0x34, 0x22);
+    processor->setMemoryByte(0x35, 0x23);
+    processor->setMemoryByte(0x2322, 0xFB);
 
     processor->execute(6);
 

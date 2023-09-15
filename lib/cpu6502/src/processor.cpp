@@ -219,6 +219,19 @@ Processor::Byte Processor::Processor::readByte(const Word &address, Dword &cycle
     return instruction;
 }
 
+Processor::Word Processor::Processor::readWord(const Word &address, Dword &cycles, const Dword &requested_cycles) {
+    Word word = 0x0000;
+
+    word = (word & 0x00FF) | (memory[address]);
+    word = word | memory[address + 1] << 8;
+
+    #ifdef DEBUG
+        printf("Cycle %i: Read Word: Read word value: 0x%04X, addresses: 0x%04X and 0x%04X\n", requested_cycles-cycles, word, address, address+1);
+    #endif
+    cycles-=2;
+    return word;
+}
+
 /**
 * Execute instruction loaded form memory.
 *
