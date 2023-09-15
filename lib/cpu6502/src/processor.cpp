@@ -6,13 +6,13 @@ Processor::Processor::Processor() {
 
     instructionMap = {
             {INS_LDA_IMMEDIATE, &Processor::INS_LDA_IMMEDIATE_HANDLE},
-//            {INS_LDA_ABSOLUTE, &Processor::INS_LDA_ABSOLUTE_HANDLE},
-//            {INS_LDA_ABSOLUTE_X, &Processor::INS_LDA_ABSOLUTE_X_HANDLE},
-//            {INS_LDA_ABSOLUTE_Y, &Processor::INS_LDA_ABSOLUTE_Y_HANDLE},
+            {INS_LDA_ABSOLUTE, &Processor::INS_LDA_ABSOLUTE_HANDLE},
+            {INS_LDA_ABSOLUTE_X, &Processor::INS_LDA_ABSOLUTE_X_HANDLE},
+            {INS_LDA_ABSOLUTE_Y, &Processor::INS_LDA_ABSOLUTE_Y_HANDLE},
             {INS_LDA_ZEROPAGE, &Processor::INS_LDA_ZEROPAGE_HANDLE},
             {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
-//            {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
-//            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE},
+            {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
+            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE},
             {INS_JSR, &Processor::INS_JSR_HANDLE}
     };
 }
@@ -138,12 +138,6 @@ void Processor::Processor::resetCPU() {
     for(const auto& pair : processor_status) { // Reset All Status Register Bits
         setProcessorStatus(pair.first, 0x00);
     }
-
-//    memory[0xFFFC] = INS_JSR; //TODO: This is debug line, remove later
-//    memory[0xFFFD] = 0x42; //TODO: This is debug line, remove later
-//    memory[0xFFFE] = 0x42; //TODO: This is debug line, remove later
-//    memory[0x4242] = INS_LDA_IMMEDIATE; //TODO: This is debug line, remove later
-//    memory[0x4243] = 0x00; //TODO: This is debug line, remove later
 }
 
 std::array<Processor::Byte, MAX_MEMORY> Processor::Processor::getMemory() const {
@@ -178,8 +172,8 @@ Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requ
 Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requested_cycles) {
     Word word = 0x0000;
 
-    word = (word & 0xFF00) | memory[program_counter];
-    word = (word & 0x00FF) | (memory[program_counter+1] << 8);
+    word = (word & 0x00FF) | (memory[program_counter]);
+    word = word | memory[program_counter + 1] << 8;
 
     #ifdef DEBUG
         printf("Cycle %i: Fetch Word: Read word value: 0x%04X, addresses: 0x%04X and 0x%04X\n", requested_cycles-cycles, word, getProgramCounter(), getProgramCounter()+1);
@@ -216,7 +210,7 @@ void Processor::Processor::writeWord(const Word &address, Word value, Dword &cyc
 * @param reqested_cycles Entire number of requested cycles
 * @return Word of instruction from address and address+1 of current program counter value.
 */
-Processor::Byte Processor::Processor::readByte(Byte address, Dword &cycles, const Dword &requested_cycles) {
+Processor::Byte Processor::Processor::readByte(const Word &address, Dword &cycles, const Dword &requested_cycles) {
     Byte instruction = memory[address];
     #ifdef DEBUG
         printf("Cycle %i: Read Byte: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, instruction, address);
