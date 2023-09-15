@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdexcept>
 #include <cstdint>
+#include <array>
 
 #include <map>
 #include <unordered_map>
@@ -19,6 +20,7 @@
 #define INS_LDA_INDIRECT_INDEXED 0xB1
 #define INS_JSR 0x20
 
+#define MAX_MEMORY (1024*64)
 
 namespace Processor {
 
@@ -30,7 +32,6 @@ namespace Processor {
     typedef void (Processor::*InstructionFunction)(Dword&, const Dword&);
 
     struct Memory {
-        static constexpr Dword MAX_MEMORY = 1024 * 64;
         Byte data[MAX_MEMORY];
         void initialize();
         Byte& operator [](Word address);
@@ -78,6 +79,7 @@ namespace Processor {
         Word getStackPointer() const;
         Byte getRegisterValue(const char&) const;
         Byte getProcessorStatus(const char&) const;
+        std::array<Byte, MAX_MEMORY> getMemory() const;
 
         void setProgramCounter(const Word&);
         void setStackPointer(const Word&);

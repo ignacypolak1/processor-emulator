@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "instructions.h"
+#include "../include/instructions.h"
 
 Processor::Processor::Processor() {
     resetCPU();
@@ -139,13 +139,18 @@ void Processor::Processor::resetCPU() {
         setProcessorStatus(pair.first, 0x00);
     }
 
-    memory[0xFFFC] = INS_JSR; //TODO: This is debug line, remove later
-    memory[0xFFFD] = 0x42; //TODO: This is debug line, remove later
-    memory[0xFFFE] = 0x42; //TODO: This is debug line, remove later
-    memory[0x4242] = INS_LDA_IMMEDIATE; //TODO: This is debug line, remove later
-    memory[0x4243] = 0x00; //TODO: This is debug line, remove later
+//    memory[0xFFFC] = INS_JSR; //TODO: This is debug line, remove later
+//    memory[0xFFFD] = 0x42; //TODO: This is debug line, remove later
+//    memory[0xFFFE] = 0x42; //TODO: This is debug line, remove later
+//    memory[0x4242] = INS_LDA_IMMEDIATE; //TODO: This is debug line, remove later
+//    memory[0x4243] = 0x00; //TODO: This is debug line, remove later
 }
 
+std::array<Processor::Byte, MAX_MEMORY> Processor::Processor::getMemory() const {
+    std::array<Byte, MAX_MEMORY> memoryArray;
+    std::copy(std::begin(memory.data), std::end(memory.data), memoryArray.begin());
+    return memoryArray;
+}
 /**
 * Fetch byte of instruction from processor memory.
 *

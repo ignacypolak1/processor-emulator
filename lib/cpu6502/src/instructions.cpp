@@ -1,4 +1,4 @@
-#include "instructions.h"
+#include "../include/instructions.h"
 
 #define NEGATIVE_MASK 0x80
 #define WORD_LSB_MASK 0xFF00
