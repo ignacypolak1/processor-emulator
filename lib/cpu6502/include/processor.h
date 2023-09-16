@@ -27,6 +27,12 @@
 #define INS_LDX_ZEROPAGE 0xA6
 #define INS_LDX_ZEROPAGE_Y 0xB6
 
+#define INS_LDY_IMMEDIATE 0xA0
+#define INS_LDY_ABSOLUTE 0xAC
+#define INS_LDY_ABSOLUTE_X 0xBC
+#define INS_LDY_ZEROPAGE 0xA4
+#define INS_LDY_ZEROPAGE_X 0xB4
+
 #define INS_JSR 0x20
 
 #define MAX_MEMORY (1024*64)
@@ -85,6 +91,12 @@ namespace Processor {
         void INS_LDX_ABSOLUTE_Y_HANDLE(Dword&, const Dword&);
         void INS_LDX_ZEROPAGE_HANDLE(Dword&, const Dword&);
         void INS_LDX_ZEROPAGE_Y_HANDLE(Dword&, const Dword&);
+
+        void INS_LDY_IMMEDIATE_HANDLE(Dword&, const Dword&);
+        void INS_LDY_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_LDY_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_LDY_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_LDY_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
 
         void INS_JSR_HANDLE(Dword&, const Dword&);
 

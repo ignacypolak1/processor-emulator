@@ -18,7 +18,12 @@ Processor::Processor::Processor() {
             {INS_LDX_ABSOLUTE, &Processor::INS_LDX_ABSOLUTE_HANDLE},
             {INS_LDX_ABSOLUTE_Y, &Processor::INS_LDX_ABSOLUTE_Y_HANDLE},
             {INS_LDX_ZEROPAGE, &Processor::INS_LDX_ZEROPAGE_HANDLE},
-            {INS_LDX_ZEROPAGE_Y, &Processor::INS_LDX_ZEROPAGE_Y_HANDLE}
+            {INS_LDX_ZEROPAGE_Y, &Processor::INS_LDX_ZEROPAGE_Y_HANDLE},
+            {INS_LDY_IMMEDIATE, &Processor::INS_LDY_IMMEDIATE_HANDLE},
+            {INS_LDY_ABSOLUTE, &Processor::INS_LDY_ABSOLUTE_HANDLE},
+            {INS_LDY_ABSOLUTE_X, &Processor::INS_LDY_ABSOLUTE_X_HANDLE},
+            {INS_LDY_ZEROPAGE, &Processor::INS_LDY_ZEROPAGE_HANDLE},
+            {INS_LDY_ZEROPAGE_X, &Processor::INS_LDY_ZEROPAGE_X_HANDLE}
     };
 }
 

@@ -180,3 +180,44 @@ void Processor::Processor::INS_LDX_ZEROPAGE_Y_HANDLE(Dword &cycles, const Dword 
     set_flags(this, value, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
     setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
 }
+
+void Processor::Processor::INS_LDY_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte value = fetchByte(cycles, requested_cycles, "INS_LDY_IMMEDIATE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDY_IMMEDIATE");
+    setRegisterValue('Y', value, cycles, requested_cycles, "INS_LDY_IMMEDIATE");
+}
+void Processor::Processor::INS_LDY_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_LDY_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDY_ABSOLUTE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDY_ABSOLUTE");
+    setRegisterValue('Y', value, cycles, requested_cycles, "INS_LDY_ABSOLUTE");
+}
+void Processor::Processor::INS_LDY_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_LDY_ABSOLUTE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    if(bAddressesOnDifferentPages(address, address+regXValue)) {
+        cycles--;
+    }
+
+    Byte value = readByte(address + regXValue, cycles, requested_cycles, "INS_LDY_ABSOLUTE_X");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDY_ABSOLUTE_X");
+    setRegisterValue('Y', value, cycles, requested_cycles, "INS_LDY_ABSOLUTE_X");
+}
+void Processor::Processor::INS_LDY_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDY_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDY_ZEROPAGE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDY_ZEROPAGE");
+    setRegisterValue('Y', value, cycles, requested_cycles, "INS_LDY_ZEROPAGE");
+}
+void Processor::Processor::INS_LDY_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDY_ZEROPAGE_X");
+    Byte regXVal = getRegisterValue('X');
+
+    address = (address + regXVal) % 256;
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDY_ZEROPAGE_X");
+    cycles--;
+
+    set_flags(this, value, cycles, requested_cycles, "INS_LDY_ZEROPAGE_X");
+    setRegisterValue('Y', value, cycles, requested_cycles, "INS_LDY_ZEROPAGE_X");
+}
