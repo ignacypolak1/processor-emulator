@@ -189,17 +189,31 @@ Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requ
 * @param address Address to write in processor memory.
 * @param value Value to write in processor memory.
 * @param cycles Remaining cycles of processor reference.
-* @param reqested_cycles Entire number of requested cycles.
-* @return Word of instruction from address and address+1 of current program counter value.
+* @param requested_cycles Entire number of requested cycles.
 */
-void Processor::Processor::writeWord(const Word &address, Word value, Dword &cycles, const Dword &reqested_cycles) {
-
+void Processor::Processor::writeWord(const Word &address, Word value, Dword &cycles, const Dword &requested_cycles) {
     memory[address] = value & 0x00FF;
     memory[address+1] = (value >> 8);
     #ifdef DEBUG
-        printf("Cycle %i: Write Word: Word 0x%04X written under addresses 0x%04X and 0x%04X\n", reqested_cycles-cycles, value, address, address+1);
+        printf("Cycle %i: Write Word: Word 0x%04X written under addresses 0x%04X and 0x%04X\n", requested_cycles-cycles, value, address, address+1);
     #endif
     cycles-=2;
+}
+
+/**
+* Write byte in processor memory.
+*
+* @param address Address to write in processor memory.
+* @param value Value to write in processor memory.
+* @param cycles Remaining cycles of processor reference.
+* @param requested_cycles Entire number of requested cycles.
+*/
+void Processor::Processor::writeByte(const Word &address, Byte value, Dword &cycles, const Dword &requested_cycles) {
+    memory[address] = value;
+    #ifdef DEBUG
+        printf("Cycle %i: Write Byte: Byte 0x%04X written under addresses 0x%04X\n", requested_cycles-cycles, value, address);
+    #endif
+    cycles-=1;
 }
 
 /**
@@ -207,7 +221,7 @@ void Processor::Processor::writeWord(const Word &address, Word value, Dword &cyc
 *
 * @param address Address in memory to read byte from.
 * @param cycles Remaining cycles of processor reference.
-* @param reqested_cycles Entire number of requested cycles.
+* @param requested_cycles Entire number of requested cycles.
 * @return Word of instruction from address and address+1 of current program counter value.
 */
 Processor::Byte Processor::Processor::readByte(const Word &address, Dword &cycles, const Dword &requested_cycles) {
