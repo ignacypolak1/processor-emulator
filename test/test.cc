@@ -337,8 +337,10 @@ TEST(Processor, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->setMemoryByte(0xFFFC, 0xB1);
     processor->setMemoryWord(0xFFFD, 0x32);
-    processor->setMemoryByte(0x32, 0x23);
-    processor->setRegisterValue('X', 0x02);
+    processor->setMemoryByte(0x32, 0x21);
+    processor->setMemoryByte(0x33, 0x25);
+    processor->setMemoryByte(0x2521, 0x23);
+    processor->setRegisterValue('Y', 0x02);
 
     processor->execute(5);
 
@@ -350,8 +352,10 @@ TEST(Processor, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->setMemoryByte(0xFFFC, 0xB1);
     processor->setMemoryWord(0xFFFD, 0x32);
-    processor->setMemoryByte(0x32, 0x00);
-    processor->setRegisterValue('X', 0x00);
+    processor->setMemoryByte(0x32, 0x21);
+    processor->setMemoryByte(0x33, 0x25);
+    processor->setMemoryByte(0x2521, 0x00);
+    processor->setRegisterValue('Y', 0x00);
 
     processor->execute(5);
 
@@ -363,8 +367,10 @@ TEST(Processor, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->setMemoryByte(0xFFFC, 0xB1);
     processor->setMemoryWord(0xFFFD, 0x32);
-    processor->setMemoryByte(0x32, 0xFA);
-    processor->setRegisterValue('X', 0x01);
+    processor->setMemoryByte(0x32, 0x21);
+    processor->setMemoryByte(0x33, 0x25);
+    processor->setMemoryByte(0x2521, 0xFA);
+    processor->setRegisterValue('Y', 0x01);
 
     processor->execute(5);
 

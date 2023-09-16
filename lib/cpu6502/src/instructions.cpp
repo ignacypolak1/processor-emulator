@@ -310,13 +310,9 @@ void Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     #endif
     Byte regXValue = getRegisterValue('X');
 
-    if(int(address / 256) != int((address + regXValue) / 256)) {
-        cycles--; // If address + regXValue crossed page in which base address is, decrement cycles by 1
-    }
-
     Word valueAddress = readWord(address + regXValue, cycles, requested_cycles);
     Byte value = readByte(valueAddress, cycles, requested_cycles);
-    cycles--; //TODO: Find why it's necessary
+    cycles--; // Dummy cycle
 
     #ifdef DEBUG
         printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, valueAddress, value);
@@ -360,14 +356,22 @@ void Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
 }
 void Processor::Processor::INS_LDA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte address = fetchByte(cycles, requested_cycles);
+    Byte regYValue = getRegisterValue('Y');
     #ifdef DEBUG
         printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Found first argument: 0x%04X\n", requested_cycles-cycles, address);
     #endif
-    Byte value = readByte(address, cycles, requested_cycles) + getRegisterValue('X');
-    cycles-=2; //TODO: Calculate why it happens
+
+    if(int(address / 256) != int((address + regYValue) / 256)) {
+        cycles--; // If address + regXValue crossed page in which base address is, decrement cycles by 1
+    }
+
+    Word valueAddress = readWord(address, cycles, requested_cycles);
+    Byte value = readByte(valueAddress, cycles, requested_cycles);
+
     #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, address, value);
+        printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Found value under address (0x%04X): 0x%04X, adding 0x%04X (Register X Value)\n", requested_cycles-cycles, valueAddress, value, regYValue);
     #endif
+    value += regYValue;
 
     if(!value) {
         #ifdef DEBUG
