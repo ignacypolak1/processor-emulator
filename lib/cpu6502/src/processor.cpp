@@ -97,7 +97,7 @@ void Processor::Processor::setStackPointer(const Word &value) {
 void Processor::Processor::setRegisterValue(const char &key, const Byte &value, const std::optional<Dword> cycles, const std::optional<Dword> requested_cycles, const std::string opname) {
     #ifdef DEBUG
     if(opname != "" && cycles.has_value() && requested_cycles.has_value()){
-        printf("Cycle %i: %s: Setting Register(%s) with value 0x%04X\n", requested_cycles.value()-cycles.value(), opname.c_str(), &key, value);
+        printf("Cycle %i: %s: Setting Register(%c) with value 0x%04X\n", requested_cycles.value()-cycles.value(), opname.c_str(), key, value);
     }
     #endif
     registers.at(key);

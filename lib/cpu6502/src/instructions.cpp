@@ -137,7 +137,6 @@ void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_
 
     writeWord(stack_pointer, program_counter-1, cycles, requested_cycles, "INS_JSR");
     setProgramCounter(subroutineAddress, cycles, requested_cycles, "INS_JSR");
-
     cycles--;
 }
 
@@ -171,8 +170,13 @@ void Processor::Processor::INS_LDX_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
     setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_ZEROPAGE");
 }
 void Processor::Processor::INS_LDX_ZEROPAGE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte address = fetchByte(cycles, requested_cycles);
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
+    Byte regYVal = getRegisterValue('Y');
+
+    address = (address + regYVal) % 256;
     Byte value = readByte(address, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
+    cycles--;
+
     set_flags(this, value, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
     setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
 }
