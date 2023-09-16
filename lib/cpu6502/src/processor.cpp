@@ -13,7 +13,12 @@ Processor::Processor::Processor() {
             {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
             {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
             {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE},
-            {INS_JSR, &Processor::INS_JSR_HANDLE}
+            {INS_JSR, &Processor::INS_JSR_HANDLE},
+            {INS_LDX_IMMEDIATE, &Processor::INS_LDX_IMMEDIATE_HANDLE},
+            {INS_LDX_ABSOLUTE, &Processor::INS_LDX_ABSOLUTE_HANDLE},
+            {INS_LDX_ABSOLUTE_Y, &Processor::INS_LDX_ABSOLUTE_Y_HANDLE},
+            {INS_LDX_ZEROPAGE, &Processor::INS_LDX_ZEROPAGE_HANDLE},
+            {INS_LDX_ZEROPAGE_Y, &Processor::INS_LDX_ZEROPAGE_Y_HANDLE}
     };
 }
 
@@ -64,8 +69,13 @@ Processor::Byte Processor::Processor::getProcessorStatus(const char& key) const 
 *
 * @param values Value to set in program counter.
 */
-void Processor::Processor::setProgramCounter(const Word& value) {
-    program_counter = value;
+void Processor::Processor::setProgramCounter(const Word& address, const std::optional<Dword> cycles, const std::optional<Dword> requested_cycles, const std::string opname) {
+    program_counter = address;
+    #ifdef DEBUG
+    if(opname != "" && cycles.has_value() && requested_cycles.has_value()) {
+        printf("Cycle %i: %s: Current program counter set to address (0x%04X)\n", requested_cycles.value()-cycles.value(), opname.c_str(), address);
+    }
+    #endif
 }
 
 /**
@@ -84,7 +94,12 @@ void Processor::Processor::setStackPointer(const Word &value) {
 * @param value Value to set in specific general purpose register.
 * @throws std::out_of_range Thrown if key doesn't exist.
 */
-void Processor::Processor::setRegisterValue(const char &key, const Byte &value) {
+void Processor::Processor::setRegisterValue(const char &key, const Byte &value, const std::optional<Dword> cycles, const std::optional<Dword> requested_cycles, const std::string opname) {
+    #ifdef DEBUG
+    if(opname != "" && cycles.has_value() && requested_cycles.has_value()){
+        printf("Cycle %i: %s: Setting Register(%s) with value 0x%04X\n", requested_cycles.value()-cycles.value(), opname.c_str(), &key, value);
+    }
+    #endif
     registers.at(key);
     registers[key] = value;
 }
@@ -152,11 +167,17 @@ std::array<Processor::Byte, MAX_MEMORY> Processor::Processor::getMemory() const 
 * @param requested_cycles Entire number of requested cycles.
 * @return Byte of instruction from address of current program counter value.
 */
-Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requested_cycles) {
+Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requested_cycles, std::string opname) {
     Byte byte = memory[program_counter];
     #ifdef DEBUG
         printf("Cycle %i: Fetch Byte: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, byte, getProgramCounter());
+        if(opname != "") {
+        #ifdef DEBUG
+                printf("Cycle %i: %s: Found byte argument: 0x%04X\n", requested_cycles-cycles, opname.c_str(), byte);
+        #endif
+    }
     #endif
+
     cycles--;
     program_counter++;
     return byte;
@@ -169,7 +190,7 @@ Processor::Byte Processor::Processor::fetchByte(Dword &cycles, const Dword &requ
 * @param requested_cycles Entire number of requested cycles.
 * @return Word of instruction from address and address+1 of current program counter value.
 */
-Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requested_cycles) {
+Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requested_cycles, std::string opname) {
     Word word = 0x0000;
 
     word = (word & 0x00FF) | (memory[program_counter]);
@@ -177,7 +198,13 @@ Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requ
 
     #ifdef DEBUG
         printf("Cycle %i: Fetch Word: Read word value: 0x%04X, addresses: 0x%04X and 0x%04X\n", requested_cycles-cycles, word, getProgramCounter(), getProgramCounter()+1);
+    if(opname != "") {
+        #ifdef DEBUG
+                printf("Cycle %i: %s: Found word argument: 0x%04X\n", requested_cycles-cycles, opname.c_str(), word);
+        #endif
+    }
     #endif
+
     cycles-=2;
     program_counter+=2;
     return word;
@@ -191,11 +218,14 @@ Processor::Word Processor::Processor::fetchWord(Dword &cycles, const Dword &requ
 * @param cycles Remaining cycles of processor reference.
 * @param requested_cycles Entire number of requested cycles.
 */
-void Processor::Processor::writeWord(const Word &address, Word value, Dword &cycles, const Dword &requested_cycles) {
+void Processor::Processor::writeWord(const Word &address, Word value, Dword &cycles, const Dword &requested_cycles, std::string opname) {
     memory[address] = value & 0x00FF;
     memory[address+1] = (value >> 8);
     #ifdef DEBUG
         printf("Cycle %i: Write Word: Word 0x%04X written under addresses 0x%04X and 0x%04X\n", requested_cycles-cycles, value, address, address+1);
+        if(opname != ""){
+            printf("Cycle %i: %s: Word value 0x%04X saved under addresses (0x%04X and 0x%04X)\n", requested_cycles-cycles, opname.c_str(), value, address, address+1);
+        }
     #endif
     cycles-=2;
 }
@@ -208,7 +238,7 @@ void Processor::Processor::writeWord(const Word &address, Word value, Dword &cyc
 * @param cycles Remaining cycles of processor reference.
 * @param requested_cycles Entire number of requested cycles.
 */
-void Processor::Processor::writeByte(const Word &address, Byte value, Dword &cycles, const Dword &requested_cycles) {
+void Processor::Processor::writeByte(const Word &address, Byte value, Dword &cycles, const Dword &requested_cycles, std::string opname) {
     memory[address] = value;
     #ifdef DEBUG
         printf("Cycle %i: Write Byte: Byte 0x%04X written under addresses 0x%04X\n", requested_cycles-cycles, value, address);
@@ -224,16 +254,19 @@ void Processor::Processor::writeByte(const Word &address, Byte value, Dword &cyc
 * @param requested_cycles Entire number of requested cycles.
 * @return Word of instruction from address and address+1 of current program counter value.
 */
-Processor::Byte Processor::Processor::readByte(const Word &address, Dword &cycles, const Dword &requested_cycles) {
-    Byte instruction = memory[address];
+Processor::Byte Processor::Processor::readByte(const Word &address, Dword &cycles, const Dword &requested_cycles, std::string opname) {
+    Byte byte = memory[address];
     #ifdef DEBUG
-        printf("Cycle %i: Read Byte: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, instruction, address);
+        printf("Cycle %i: Read Byte: Read byte value: 0x%04X, address: 0x%04X\n", requested_cycles-cycles, byte, address);
+    if(opname != "") {
+        printf("Cycle %i: %s: Found value under address 0x%04X: 0x%04X\n", requested_cycles-cycles, opname.c_str(), address, byte);
+    }
     #endif
     cycles--;
-    return instruction;
+    return byte;
 }
 
-Processor::Word Processor::Processor::readWord(const Word &address, Dword &cycles, const Dword &requested_cycles) {
+Processor::Word Processor::Processor::readWord(const Word &address, Dword &cycles, const Dword &requested_cycles, std::string opname) {
     Word word = 0x0000;
 
     word = (word & 0x00FF) | (memory[address]);
@@ -241,6 +274,9 @@ Processor::Word Processor::Processor::readWord(const Word &address, Dword &cycle
 
     #ifdef DEBUG
         printf("Cycle %i: Read Word: Read word value: 0x%04X, addresses: 0x%04X and 0x%04X\n", requested_cycles-cycles, word, address, address+1);
+        if(opname != "") {
+            printf("Cycle %i: %s: Found value under address 0x%04X and 0x%04X: 0x%04X\n", requested_cycles-cycles, opname.c_str(), address, address+1, word);
+        }
     #endif
     cycles-=2;
     return word;

@@ -4,424 +4,175 @@
 #define WORD_LSB_MASK 0xFF00
 #define WORD_MSB_MASK 0x00FF
 
+void set_flags(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
+
+    if(!value) {
+        #ifdef DEBUG
+                printf("Cycle %i: %s: Setting Zero Flag\n", requested_cycles-cycles, opname.c_str());
+        #endif
+        processor->setProcessorStatus('Z', 1);
+        #ifdef DEBUG
+                printf("Cycle %i: %s: Resetting Negative Flag\n", requested_cycles-cycles, opname.c_str());
+        #endif
+        processor->setProcessorStatus('N', 0);
+    }
+
+    else {
+        #ifdef DEBUG
+                printf("Cycle %i: %s: Resetting Zero Flag\n", requested_cycles-cycles, opname.c_str());
+        #endif
+        processor->setProcessorStatus('Z', 0);
+
+        if(value & NEGATIVE_MASK) {
+            #ifdef DEBUG
+                        printf("Cycle %i: %s: Setting Negative Flag\n", requested_cycles-cycles, opname.c_str());
+            #endif
+            processor->setProcessorStatus('N', 1);
+        }
+        else {
+            #ifdef DEBUG
+                        printf("Cycle %i: %s: Resetting Negative Flag\n", requested_cycles-cycles, opname.c_str());
+            #endif
+            processor->setProcessorStatus('N', 0);
+        }
+    }
+}
+
+bool bAddressesOnDifferentPages(Processor::Word address_1, Processor::Word address_2) {
+    if(int(address_1 / 256) != int(address_2 / 256)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 void Processor::Processor::INS_LDA_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte value = fetchByte(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_IMMEDIATE: Found first argument: 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_IMMEDIATE: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_IMMEDIATE: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_IMMEDIATE: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_IMMEDIATE: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_IMMEDIATE: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_IMMEDIATE: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    Byte value = fetchByte(cycles, requested_cycles, "INS_LDA_IMMEDIATE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_IMMEDIATE");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_IMMEDIATE");
 }
 void Processor::Processor::INS_LDA_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Word address = fetchWord(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE: Found first word argument: 0x%04X\n", requested_cycles-cycles, address);
-    #endif
-
-    Byte value = readByte(address, cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, address, value);
-    #endif
-
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ABSOLUTE: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ABSOLUTE: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    Word address = fetchWord(cycles, requested_cycles, "INS_LDA_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDA_ABSOLUTE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_ABSOLUTE");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_ABSOLUTE");
 }
 
 void Processor::Processor::INS_LDA_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Word address = fetchWord(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE_X: Found first word argument: 0x%04X\n", requested_cycles-cycles, address);
-    #endif
+    Word address = fetchWord(cycles, requested_cycles, "INS_LDA_ABSOLUTE_X");
     Byte regXValue = getRegisterValue('X');
 
-    if(int(address / 256) != int((address + regXValue) / 256)) {
-        cycles--; // If address + regXValue crossed page in which base address is, decrement cycles by 1
+    if(bAddressesOnDifferentPages(address, address+regXValue)) {
+        cycles--;
     }
 
-    Byte value = readByte(address + regXValue, cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE_X: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, address, value);
-    #endif
-
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE_X: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE_X: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE_X: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ABSOLUTE_X: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ABSOLUTE_X: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE_X: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    Byte value = readByte(address + regXValue, cycles, requested_cycles, "INS_LDA_ABSOLUTE_X");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_ABSOLUTE_X");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_ABSOLUTE_X");
 }
 void Processor::Processor::INS_LDA_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Word address = fetchWord(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Found first word argument: 0x%04X\n", requested_cycles-cycles, address);
-    #endif
+    Word address = fetchWord(cycles, requested_cycles, "INS_LDA_ABSOLUTE_Y");
     Byte regYValue = getRegisterValue('Y');
 
-    if(int(address / 256) != int((address + regYValue) / 256)) {
-        cycles--; // If address + regYValue crossed page in which base address is, decrement cycles by 1
+    if(bAddressesOnDifferentPages(address, address+regYValue)) {
+        cycles--;
     }
 
-    Byte value = readByte(address + regYValue, cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, address, value);
-    #endif
-
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ABSOLUTE_Y: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    Byte value = readByte(address + regYValue, cycles, requested_cycles, "INS_LDA_ABSOLUTE_Y");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_ABSOLUTE_Y");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_ABSOLUTE_Y");
 }
 
 void Processor::Processor::INS_LDA_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte address = fetchByte(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ZEROPAGE: Found first argument: 0x%04X\n", requested_cycles-cycles, address);
-    #endif
-    Byte value = readByte(address, cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ZEROPAGE: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, address, value);
-    #endif
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDA_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDA_ZEROPAGE");
 
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ZEROPAGE: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ZEROPAGE: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ZEROPAGE: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ZEROPAGE: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ZEROPAGE: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ZEROPAGE: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_ZEROPAGE");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_ZEROPAGE");
 }
 void Processor::Processor::INS_LDA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte address = 0x0000;
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDA_ZEROPAGE_X");
+    Byte regXValue = getRegisterValue('X');
 
-    Byte first_address = fetchByte(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ZEROPAGE_X: Found first argument: 0x%04X\n", requested_cycles-cycles, first_address);
-    #endif
-
-    Byte second_address = getRegisterValue('X');
     cycles--;
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ZEROPAGE_X: Found second argument: 0x%04X\n", requested_cycles-cycles, second_address);
-    #endif
 
-    address = (first_address + second_address) % 256;
-    Byte value = readByte(address, cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ZEROPAGE_X: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, address, value);
-    #endif
+    address = (address + regXValue) % 256;
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDA_ZEROPAGE_X");
 
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ZEROPAGE_X: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ZEROPAGE_X: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_ZEROPAGE_X: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ZEROPAGE_X: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_ZEROPAGE_X: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_ZEROPAGE_X: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_ZEROPAGE_X");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_ZEROPAGE_X");
 }
 
 void Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte address = fetchByte(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Found first argument: 0x%04X\n", requested_cycles-cycles, address);
-    #endif
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
     Byte regXValue = getRegisterValue('X');
 
-    Word valueAddress = readWord(address + regXValue, cycles, requested_cycles);
-    Byte value = readByte(valueAddress, cycles, requested_cycles);
+    Word valueAddress = readWord(address + regXValue, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
+    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
+
     cycles--; // Dummy cycle
 
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Found value under address (0x%04X): 0x%04X\n", requested_cycles-cycles, valueAddress, value);
-    #endif
-
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDEXED_INDIRECT: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
 }
 void Processor::Processor::INS_LDA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Byte address = fetchByte(cycles, requested_cycles);
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
     Byte regYValue = getRegisterValue('Y');
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Found first argument: 0x%04X\n", requested_cycles-cycles, address);
-    #endif
 
-    if(int(address / 256) != int((address + regYValue) / 256)) {
-        cycles--; // If address + regXValue crossed page in which base address is, decrement cycles by 1
+    if(bAddressesOnDifferentPages(address, address+regYValue)) {
+        cycles--;
     }
 
-    Word valueAddress = readWord(address, cycles, requested_cycles);
-    Byte value = readByte(valueAddress, cycles, requested_cycles);
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
+    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
 
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Found value under address (0x%04X): 0x%04X, adding 0x%04X (Register X Value)\n", requested_cycles-cycles, valueAddress, value, regYValue);
-    #endif
     value += regYValue;
 
-    if(!value) {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Setting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 1);
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Resetting Negative Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('N', 0);
-    }
-
-    else {
-        #ifdef DEBUG
-                printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Resetting Zero Flag\n", requested_cycles-cycles);
-        #endif
-        setProcessorStatus('Z', 0);
-
-        if(value & NEGATIVE_MASK) {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Setting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 1);
-        }
-        else {
-            #ifdef DEBUG
-                        printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Resetting Negative Flag\n", requested_cycles-cycles);
-            #endif
-            setProcessorStatus('N', 0);
-        }
-    }
-
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_INDIRECT_INDEXED: Setting Accumulator Register(A) with value 0x%04X\n", requested_cycles-cycles, value);
-    #endif
-    setRegisterValue('A', value);
+    set_flags(this, value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
+    setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
 }
 
 void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Word subroutineAddress = fetchWord(cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_JSR: Found first word argument: 0x%04X\n", requested_cycles-cycles, subroutineAddress);
-    #endif
-    writeWord(stack_pointer, program_counter-1, cycles, requested_cycles);
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_JSR: Current program counter address (0x%04X) saved on stack addresses (0x%04X and 0x%04X)\n", requested_cycles-cycles, program_counter, stack_pointer, stack_pointer+1);
-    #endif
-    program_counter = subroutineAddress;
-    #ifdef DEBUG
-        printf("Cycle %i: INS_LDA_JSR: Current program counter set to subroutine address (0x%04X)\n", requested_cycles-cycles, subroutineAddress);
-    #endif
+    Word subroutineAddress = fetchWord(cycles, requested_cycles, "INS_JSR");
+
+    writeWord(stack_pointer, program_counter-1, cycles, requested_cycles, "INS_JSR");
+    setProgramCounter(subroutineAddress, cycles, requested_cycles, "INS_JSR");
+
     cycles--;
+}
+
+void Processor::Processor::INS_LDX_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte value = fetchByte(cycles, requested_cycles, "INS_LDX_IMMEDIATE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDX_IMMEDIATE");
+    setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_IMMEDIATE");
+}
+void Processor::Processor::INS_LDX_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_LDX_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDX_ABSOLUTE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDX_ABSOLUTE");
+    setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_ABSOLUTE");
+}
+void Processor::Processor::INS_LDX_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_LDX_ABSOLUTE_Y");
+    Byte regYValue = getRegisterValue('Y');
+
+    if(bAddressesOnDifferentPages(address, address+regYValue)) {
+        cycles--;
+    }
+
+    Byte value = readByte(address + regYValue, cycles, requested_cycles, "INS_LDX_ABSOLUTE_Y");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDX_ABSOLUTE_Y");
+    setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_ABSOLUTE_Y");
+}
+void Processor::Processor::INS_LDX_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LDX_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDX_ZEROPAGE");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDX_ZEROPAGE");
+    setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_ZEROPAGE");
+}
+void Processor::Processor::INS_LDX_ZEROPAGE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles);
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
+    set_flags(this, value, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
+    setRegisterValue('X', value, cycles, requested_cycles, "INS_LDX_ZEROPAGE_Y");
 }
