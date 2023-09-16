@@ -13,7 +13,6 @@ Processor::Processor::Processor() {
             {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
             {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
             {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE},
-            {INS_JSR, &Processor::INS_JSR_HANDLE},
             {INS_LDX_IMMEDIATE, &Processor::INS_LDX_IMMEDIATE_HANDLE},
             {INS_LDX_ABSOLUTE, &Processor::INS_LDX_ABSOLUTE_HANDLE},
             {INS_LDX_ABSOLUTE_Y, &Processor::INS_LDX_ABSOLUTE_Y_HANDLE},
@@ -23,7 +22,8 @@ Processor::Processor::Processor() {
             {INS_LDY_ABSOLUTE, &Processor::INS_LDY_ABSOLUTE_HANDLE},
             {INS_LDY_ABSOLUTE_X, &Processor::INS_LDY_ABSOLUTE_X_HANDLE},
             {INS_LDY_ZEROPAGE, &Processor::INS_LDY_ZEROPAGE_HANDLE},
-            {INS_LDY_ZEROPAGE_X, &Processor::INS_LDY_ZEROPAGE_X_HANDLE}
+            {INS_LDY_ZEROPAGE_X, &Processor::INS_LDY_ZEROPAGE_X_HANDLE},
+            {INS_JSR, &Processor::INS_JSR_HANDLE},
     };
 }
 
