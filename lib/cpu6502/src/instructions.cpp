@@ -275,3 +275,45 @@ void Processor::Processor::INS_STA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Word valueAddress = readWord(address, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
     writeByte(valueAddress+regYValue, regAValue, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
 }
+
+void Processor::Processor::INS_STX_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_STX_ABSOLUTE");
+    Byte value = getRegisterValue('X');
+    writeByte(address, value, cycles, requested_cycles, "INS_STX_ABSOLUTE");
+}
+
+void Processor::Processor::INS_STX_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STX_ZEROPAGE");
+    Byte value = getRegisterValue('X');
+    writeByte(address, value, cycles, requested_cycles, "INS_STX_ZEROPAGE");
+}
+
+void Processor::Processor::INS_STX_ZEROPAGE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STX_ZEROPAGE_Y");
+    Byte value = getRegisterValue('X');
+    Byte regYValue = getRegisterValue('Y');
+
+    address = (address + regYValue) % 256;
+    writeByte(address, value, cycles, requested_cycles, "INS_STX_ZEROPAGE_Y");
+}
+
+void Processor::Processor::INS_STY_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_STX_ABSOLUTE");
+    Byte value = getRegisterValue('Y');
+    writeByte(address, value, cycles, requested_cycles, "INS_STX_ABSOLUTE");
+}
+
+void Processor::Processor::INS_STY_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STX_ZEROPAGE");
+    Byte value = getRegisterValue('Y');
+    writeByte(address, value, cycles, requested_cycles, "INS_STX_ZEROPAGE");
+}
+
+void Processor::Processor::INS_STY_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STX_ZEROPAGE_Y");
+    Byte value = getRegisterValue('Y');
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 256;
+    writeByte(address, value, cycles, requested_cycles, "INS_STX_ZEROPAGE_Y");
+}

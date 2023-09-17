@@ -30,7 +30,13 @@ Processor::Processor::Processor() {
             {INS_STA_ZEROPAGE, &Processor::INS_STA_ZEROPAGE_HANDLE},
             {INS_STA_ZEROPAGE_X, &Processor::INS_STA_ZEROPAGE_X_HANDLE},
             {INS_STA_INDEXED_INDIRECT, &Processor::INS_STA_INDEXED_INDIRECT_HANDLE},
-            {INS_STA_INDIRECT_INDEXED, &Processor::INS_STA_INDIRECT_INDEXED_HANDLE}
+            {INS_STA_INDIRECT_INDEXED, &Processor::INS_STA_INDIRECT_INDEXED_HANDLE},
+            {INS_STX_ABSOLUTE, &Processor::INS_STX_ABSOLUTE_HANDLE},
+            {INS_STX_ZEROPAGE, &Processor::INS_STX_ZEROPAGE_HANDLE},
+            {INS_STX_ZEROPAGE_Y, &Processor::INS_STX_ZEROPAGE_Y_HANDLE},
+            {INS_STY_ABSOLUTE, &Processor::INS_STY_ABSOLUTE_HANDLE},
+            {INS_STY_ZEROPAGE, &Processor::INS_STY_ZEROPAGE_HANDLE},
+            {INS_STY_ZEROPAGE_X, &Processor::INS_STY_ZEROPAGE_X_HANDLE}
     };
 }
 

@@ -941,3 +941,95 @@ TEST(Processor, INS_STA_ZEROPAGE_INDIRECT_INDEXED) {
 
     delete processor;
 }
+
+TEST(Processor, INS_STX_ABSOLUTE_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('X', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x8E);
+    processor->setMemoryWord(0xFFFD, 0x2346);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getMemory()[0x2346], 0x28) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STX_ZEROPAGE_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('X', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x86);
+    processor->setMemoryByte(0xFFFD, 0x25);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getMemory()[0x25], 0x28) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STX_ZEROPAGE_Y_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('Y', 0x02);
+    processor->setRegisterValue('X', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x96);
+    processor->setMemoryByte(0xFFFD, 0x25);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getMemory()[0x27], 0x28) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STY_ABSOLUTE_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('Y', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x8C);
+    processor->setMemoryWord(0xFFFD, 0x2346);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getMemory()[0x2346], 0x28) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STY_ZEROPAGE_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('Y', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x84);
+    processor->setMemoryByte(0xFFFD, 0x25);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getMemory()[0x25], 0x28) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STY_ZEROPAGE_X_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('X', 0x02);
+    processor->setRegisterValue('Y', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x94);
+    processor->setMemoryByte(0xFFFD, 0x25);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getMemory()[0x27], 0x28) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
