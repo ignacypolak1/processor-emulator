@@ -55,6 +55,22 @@
 #define INS_TSX 0xBA
 #define INS_TXS 0x9A
 
+#define INS_INC_ZEROPAGE 0xE6
+#define INS_INC_ZEROPAGE_X 0xF6
+#define INS_INC_ABSOLUTE 0xEE
+#define INS_INC_ABSOLUTE_X 0xFE
+
+#define INS_DEC_ZEROPAGE 0xC6
+#define INS_DEC_ZEROPAGE_X 0xD6
+#define INS_DEC_ABSOLUTE 0xCE
+#define INS_DEC_ABSOLUTE_X 0xDE
+
+#define INS_INX 0xE8
+#define INS_DEX 0xCA
+
+#define INS_INY 0xC8
+#define INS_DEY 0x88
+
 #define INS_JSR 0x20
 
 #endif

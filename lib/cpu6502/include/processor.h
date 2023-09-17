@@ -106,6 +106,16 @@ namespace Processor {
         void INS_TSX_HANDLE(Dword&, const Dword&);
         void INS_TXS_HANDLE(Dword&, const Dword&);
 
+        void INS_INC_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_INC_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+        void INS_INC_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_INC_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+
+        void INS_DEC_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_DEC_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+        void INS_DEC_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_DEC_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:

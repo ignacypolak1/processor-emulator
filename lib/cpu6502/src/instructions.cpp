@@ -47,7 +47,15 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_TXA, &Processor::Processor::INS_TXA_HANDLE},
         {INS_TYA, &Processor::Processor::INS_TYA_HANDLE},
         {INS_TSX, &Processor::Processor::INS_TSX_HANDLE},
-        {INS_TXS, &Processor::Processor::INS_TXS_HANDLE}
+        {INS_TXS, &Processor::Processor::INS_TXS_HANDLE},
+        {INS_INC_ZEROPAGE, &Processor::Processor::INS_INC_ZEROPAGE_HANDLE},
+        {INS_INC_ZEROPAGE_X, &Processor::Processor::INS_INC_ZEROPAGE_X_HANDLE},
+        {INS_INC_ABSOLUTE, &Processor::Processor::INS_INC_ABSOLUTE_HANDLE},
+        {INS_INC_ABSOLUTE_X, &Processor::Processor::INS_INC_ABSOLUTE_X_HANDLE},
+        {INS_DEC_ZEROPAGE, &Processor::Processor::INS_DEC_ZEROPAGE_HANDLE},
+        {INS_DEC_ZEROPAGE_X, &Processor::Processor::INS_DEC_ZEROPAGE_X_HANDLE},
+        {INS_DEC_ABSOLUTE, &Processor::Processor::INS_DEC_ABSOLUTE_HANDLE},
+        {INS_DEC_ABSOLUTE_X, &Processor::Processor::INS_DEC_ABSOLUTE_X_HANDLE}
 };
 
 void set_flags(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -463,4 +471,91 @@ void Processor::Processor::INS_TXS_HANDLE(Dword &cycles, const Dword &requested_
     Byte regXValue = getRegisterValue('X');
     setStackPointer(regXValue);
     cycles--;
+}
+
+void Processor::Processor::INS_INC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_INC_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_INC_ZEROPAGE");
+    cycles--;
+    value++;
+    writeByte(address, value, cycles, requested_cycles, "INS_INC_ZEROPAGE");
+    set_flags(this, value, cycles, requested_cycles, "INS_INC_ZEROPAGE");
+}
+
+void Processor::Processor::INS_INC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_INC_ZEROPAGE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 256;
+    cycles-=2;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_INC_ZEROPAGE_X");
+    value++;
+    writeByte(address, value, cycles, requested_cycles, "INS_INC_ZEROPAGE_X");
+    set_flags(this, value, cycles, requested_cycles, "INS_INC_ZEROPAGE_X");
+}
+
+void Processor::Processor::INS_INC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_INC_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_INC_ABSOLUTE");
+    cycles--;
+    value++;
+    writeByte(address, value, cycles, requested_cycles, "INS_INC_ABSOLUTE");
+    set_flags(this, value, cycles, requested_cycles, "INS_INC_ABSOLUTE");
+}
+
+void Processor::Processor::INS_INC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_INC_ABSOLUTE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 65536;
+    cycles-=2;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_INC_ABSOLUTE_X");
+    value++;
+    writeByte(address, value, cycles, requested_cycles, "INS_INC_ABSOLUTE_X");
+    set_flags(this, value, cycles, requested_cycles, "INS_INC_ABSOLUTE_X");
+}
+
+void Processor::Processor::INS_DEC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_DEC_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_DEC_ZEROPAGE");
+    cycles--;
+    value--;
+    writeByte(address, value, cycles, requested_cycles, "INS_DEC_ZEROPAGE");
+    set_flags(this, value, cycles, requested_cycles, "INS_DEC_ZEROPAGE");
+}
+
+void Processor::Processor::INS_DEC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_DEC_ZEROPAGE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 256;
+    cycles-=2;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_DEC_ZEROPAGE_X");
+    value--;
+    writeByte(address, value, cycles, requested_cycles, "INS_DEC_ZEROPAGE_X");
+    set_flags(this, value, cycles, requested_cycles, "INS_DEC_ZEROPAGE_X");
+}
+
+void Processor::Processor::INS_DEC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_DEC_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_DEC_ABSOLUTE");
+    value--;
+    cycles-=1;
+    writeByte(address, value, cycles, requested_cycles, "INS_DEC_ABSOLUTE");
+    set_flags(this, value, cycles, requested_cycles, "INS_DEC_ABSOLUTE");
+}
+
+void Processor::Processor::INS_DEC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_DEC_ABSOLUTE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 65536;
+    Byte value = readByte(address, cycles, requested_cycles, "INS_DEC_ABSOLUTE_X");
+    value--;
+    cycles-=2;
+    writeByte(address, value, cycles, requested_cycles, "INS_DEC_ABSOLUTE_X");
+    set_flags(this, value, cycles, requested_cycles, "INS_DEC_ABSOLUTE_X");
 }
