@@ -377,3 +377,44 @@ void Processor::Processor::INS_SEI_HANDLE(Dword &cycles, const Dword &requested_
     #endif
     cycles-=1;
 }
+
+void Processor::Processor::INS_TAX_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regAValue = getRegisterValue('A');
+    setRegisterValue('X', regAValue, cycles, requested_cycles, "INS_TAX");
+    cycles--;
+    set_flags(this, regAValue, cycles, requested_cycles, "INS_TAX");
+}
+
+void Processor::Processor::INS_TAY_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regAValue = getRegisterValue('A');
+    setRegisterValue('Y', regAValue, cycles, requested_cycles, "INS_TAY");
+    cycles--;
+    set_flags(this, regAValue, cycles, requested_cycles, "INS_TAY");
+}
+
+void Processor::Processor::INS_TXA_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regXValue = getRegisterValue('X');
+    setRegisterValue('A', regXValue, cycles, requested_cycles, "INS_TXA");
+    cycles--;
+    set_flags(this, regXValue, cycles, requested_cycles, "INS_TXA");
+}
+
+void Processor::Processor::INS_TYA_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regYValue = getRegisterValue('Y');
+    setRegisterValue('A', regYValue, cycles, requested_cycles, "INS_TYA");
+    cycles--;
+    set_flags(this, regYValue, cycles, requested_cycles, "INS_TYA");
+}
+
+void Processor::Processor::INS_TSX_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte stackValue = getStackPointer();
+    setRegisterValue('X', stackValue, cycles, requested_cycles, "INS_TSX");
+    cycles--;
+    set_flags(this, stackValue, cycles, requested_cycles, "INS_TSX");
+}
+
+void Processor::Processor::INS_TXS_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regXValue = getRegisterValue('X');
+    setStackPointer(regXValue);
+    cycles--;
+}

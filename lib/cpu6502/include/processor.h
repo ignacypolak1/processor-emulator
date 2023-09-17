@@ -57,6 +57,13 @@
 #define INS_SED 0xF8
 #define INS_SEI 0x78
 
+#define INS_TAX 0xAA
+#define INS_TAY 0xA8
+#define INS_TXA 0x8A
+#define INS_TYA 0x98
+#define INS_TSX 0xBA
+#define INS_TXS 0x9A
+
 #define INS_JSR 0x20
 
 #define MAX_MEMORY (1024*64)
@@ -146,6 +153,13 @@ namespace Processor {
         void INS_SED_HANDLE(Dword&, const Dword&);
         void INS_SEI_HANDLE(Dword&, const Dword&);
 
+        void INS_TAX_HANDLE(Dword&, const Dword&);
+        void INS_TAY_HANDLE(Dword&, const Dword&);
+        void INS_TXA_HANDLE(Dword&, const Dword&);
+        void INS_TYA_HANDLE(Dword&, const Dword&);
+        void INS_TSX_HANDLE(Dword&, const Dword&);
+        void INS_TXS_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
@@ -159,7 +173,7 @@ namespace Processor {
         std::array<Byte, MAX_MEMORY> getMemory() const;
 
         void setProgramCounter(const Word&, const std::optional<Dword> = std::nullopt, const std::optional<Dword> = std::nullopt, const std::string = "");
-        void setStackPointer(const Word&);
+        void setStackPointer(const Byte&);
         void setRegisterValue(const char&, const Byte&, const std::optional<Dword> = std::nullopt, const std::optional<Dword> = std::nullopt, const std::string = "");
         void setProcessorStatus(const char&, const Byte&);
 

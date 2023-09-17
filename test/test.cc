@@ -25,7 +25,7 @@ TEST_F(ProcessorTest, INITIALIZATION_TEST) {
             nonZeroMemory = true;
         }
     }
-    EXPECT_FALSE(nonZeroMemory) << "Memory initialization failed, expected all memory cleared";
+    EXPECT_FALSE(nonZeroMemory);
 
     bool nonZeroRegister = false;
     char generalPurposeRegisters[] = {'A', 'X', 'Y'};
@@ -35,7 +35,7 @@ TEST_F(ProcessorTest, INITIALIZATION_TEST) {
             nonZeroRegister = true;
         }
     }
-    EXPECT_FALSE(nonZeroRegister) << "General purpose registers initialization failed, expected all registers cleared";
+    EXPECT_FALSE(nonZeroRegister);
 
     bool nonZeroStatus = false;
     char statusBits[] = {'C', 'Z', 'I', 'D', 'B', 'V', 'N'};
@@ -45,7 +45,7 @@ TEST_F(ProcessorTest, INITIALIZATION_TEST) {
             nonZeroRegister = true;
         }
     }
-    EXPECT_FALSE(nonZeroStatus) << "Status register initialization failed, expected all bits cleared";
+    EXPECT_FALSE(nonZeroStatus);
 }
 
 TEST_F(ProcessorTest, INS_LDA_IMMEDIATE_TEST) {
@@ -54,9 +54,9 @@ TEST_F(ProcessorTest, INS_LDA_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -65,9 +65,9 @@ TEST_F(ProcessorTest, INS_LDA_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -76,9 +76,9 @@ TEST_F(ProcessorTest, INS_LDA_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_TEST) {
@@ -88,9 +88,9 @@ TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x23) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x23);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -100,9 +100,9 @@ TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -112,9 +112,9 @@ TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_X_TEST) {
@@ -126,9 +126,9 @@ TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x23) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x23);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -140,9 +140,9 @@ TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -154,9 +154,9 @@ TEST_F(ProcessorTest, INS_LDA_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_TEST) {
@@ -166,9 +166,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x23) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x23);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -178,9 +178,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -190,9 +190,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_X_TEST) {
@@ -204,9 +204,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x23) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x23);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -218,9 +218,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -232,9 +232,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_Y_TEST) {
@@ -246,9 +246,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x23) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x23);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -260,9 +260,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -274,9 +274,9 @@ TEST_F(ProcessorTest, INS_LDA_ABSOLUTE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDA_INDEXED_INDIRECT_TEST) {
@@ -290,9 +290,9 @@ TEST_F(ProcessorTest, INS_LDA_INDEXED_INDIRECT_TEST) {
 
     processor->execute(6);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x46) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x46);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -306,9 +306,9 @@ TEST_F(ProcessorTest, INS_LDA_INDEXED_INDIRECT_TEST) {
 
     processor->execute(6);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -322,9 +322,9 @@ TEST_F(ProcessorTest, INS_LDA_INDEXED_INDIRECT_TEST) {
 
     processor->execute(6);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDA_INDIRECT_INDEXED_TEST) {
@@ -338,9 +338,9 @@ TEST_F(ProcessorTest, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->execute(5);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x25) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x25);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -354,9 +354,9 @@ TEST_F(ProcessorTest, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->execute(5);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -370,9 +370,9 @@ TEST_F(ProcessorTest, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->execute(5);
 
-    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFB);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDX_IMMEDIATE_TEST) {
@@ -381,9 +381,9 @@ TEST_F(ProcessorTest, INS_LDX_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -392,9 +392,9 @@ TEST_F(ProcessorTest, INS_LDX_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -403,9 +403,9 @@ TEST_F(ProcessorTest, INS_LDX_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_TEST) {
@@ -415,9 +415,9 @@ TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -427,9 +427,9 @@ TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -439,9 +439,9 @@ TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_Y_TEST) {
@@ -453,9 +453,9 @@ TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -467,9 +467,9 @@ TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -481,9 +481,9 @@ TEST_F(ProcessorTest, INS_LDX_ABSOLUTE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_TEST) {
@@ -493,9 +493,9 @@ TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -505,9 +505,9 @@ TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -517,9 +517,9 @@ TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_Y_TEST) {
@@ -531,9 +531,9 @@ TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -545,9 +545,9 @@ TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -559,9 +559,9 @@ TEST_F(ProcessorTest, INS_LDX_ZEROPAGE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('X'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDY_IMMEDIATE_TEST) {
@@ -570,9 +570,9 @@ TEST_F(ProcessorTest, INS_LDY_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -581,9 +581,9 @@ TEST_F(ProcessorTest, INS_LDY_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -592,9 +592,9 @@ TEST_F(ProcessorTest, INS_LDY_IMMEDIATE_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_TEST) {
@@ -604,9 +604,9 @@ TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -616,9 +616,9 @@ TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -628,9 +628,9 @@ TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_X_TEST) {
@@ -642,9 +642,9 @@ TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -656,9 +656,9 @@ TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -670,9 +670,9 @@ TEST_F(ProcessorTest, INS_LDY_ABSOLUTE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_TEST) {
@@ -682,9 +682,9 @@ TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -694,9 +694,9 @@ TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -706,9 +706,9 @@ TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_X_TEST) {
@@ -720,9 +720,9 @@ TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x52);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -734,9 +734,9 @@ TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 1) << "Zero flag expected to be set";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 0) << "Negative flag expected to be unset";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
 
     processor->resetCPU();
 
@@ -748,9 +748,9 @@ TEST_F(ProcessorTest, INS_LDY_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD) << "Wrong accumulator status, operation failed";
-    EXPECT_EQ(processor->getProcessorStatus('Z'), 0) << "Zero flag expected to be unset";
-    EXPECT_EQ(processor->getProcessorStatus('N'), 1) << "Negative flag expected to be set";
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFD);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
 }
 
 
@@ -760,7 +760,7 @@ TEST_F(ProcessorTest, INS_JSR_TEST) {
 
     processor->execute(6);
 
-    EXPECT_EQ(processor->getProgramCounter(), 0x4243) << "Wrong program counter value, operation failed";
+    EXPECT_EQ(processor->getProgramCounter(), 0x4243);
 }
 
 TEST_F(ProcessorTest, INS_STA_ABSOLUTE_TEST) {
@@ -771,7 +771,7 @@ TEST_F(ProcessorTest, INS_STA_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getMemory()[0x4324], 0x23) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x4324], 0x23);
 }
 
 TEST_F(ProcessorTest, INS_STA_ABSOLUTE_X_TEST) {
@@ -783,7 +783,7 @@ TEST_F(ProcessorTest, INS_STA_ABSOLUTE_X_TEST) {
 
     processor->execute(5);
 
-    EXPECT_EQ(processor->getMemory()[0x4326], 0x23) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x4326], 0x23);
 }
 
 TEST_F(ProcessorTest, INS_STA_ABSOLUTE_Y_TEST) {
@@ -795,7 +795,7 @@ TEST_F(ProcessorTest, INS_STA_ABSOLUTE_Y_TEST) {
 
     processor->execute(5);
 
-    EXPECT_EQ(processor->getMemory()[0x4326], 0x23) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x4326], 0x23);
 }
 
 TEST_F(ProcessorTest, INS_STA_ZEROPAGE_TEST) {
@@ -806,7 +806,7 @@ TEST_F(ProcessorTest, INS_STA_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getMemory()[0x0024], 0x23) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x0024], 0x23);
 }
 
 TEST_F(ProcessorTest, INS_STA_ZEROPAGE_X_TEST) {
@@ -818,7 +818,7 @@ TEST_F(ProcessorTest, INS_STA_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getMemory()[0x0026], 0x23) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x0026], 0x23);
 }
 
 TEST_F(ProcessorTest, INS_STA_ZEROPAGE_INDEXED_INDIRECT) {
@@ -831,7 +831,7 @@ TEST_F(ProcessorTest, INS_STA_ZEROPAGE_INDEXED_INDIRECT) {
 
     processor->execute(6);
 
-    EXPECT_EQ(processor->getMemory()[0x3421], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x3421], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_STA_ZEROPAGE_INDIRECT_INDEXED) {
@@ -844,7 +844,7 @@ TEST_F(ProcessorTest, INS_STA_ZEROPAGE_INDIRECT_INDEXED) {
 
     processor->execute(6);
 
-    EXPECT_EQ(processor->getMemory()[0x3423], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x3423], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_STX_ABSOLUTE_TEST) {
@@ -855,7 +855,7 @@ TEST_F(ProcessorTest, INS_STX_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getMemory()[0x2346], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x2346], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_STX_ZEROPAGE_TEST) {
@@ -866,7 +866,7 @@ TEST_F(ProcessorTest, INS_STX_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getMemory()[0x25], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x25], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_STX_ZEROPAGE_Y_TEST) {
@@ -878,7 +878,7 @@ TEST_F(ProcessorTest, INS_STX_ZEROPAGE_Y_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getMemory()[0x27], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x27], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_STY_ABSOLUTE_TEST) {
@@ -889,7 +889,7 @@ TEST_F(ProcessorTest, INS_STY_ABSOLUTE_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getMemory()[0x2346], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x2346], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_STY_ZEROPAGE_TEST) {
@@ -900,7 +900,7 @@ TEST_F(ProcessorTest, INS_STY_ZEROPAGE_TEST) {
 
     processor->execute(3);
 
-    EXPECT_EQ(processor->getMemory()[0x25], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x25], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_STY_ZEROPAGE_X_TEST) {
@@ -912,7 +912,7 @@ TEST_F(ProcessorTest, INS_STY_ZEROPAGE_X_TEST) {
 
     processor->execute(4);
 
-    EXPECT_EQ(processor->getMemory()[0x27], 0x28) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getMemory()[0x27], 0x28);
 }
 
 TEST_F(ProcessorTest, INS_CLC_TEST) {
@@ -921,7 +921,7 @@ TEST_F(ProcessorTest, INS_CLC_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
 }
 
 TEST_F(ProcessorTest, INS_CLD_TEST) {
@@ -930,7 +930,7 @@ TEST_F(ProcessorTest, INS_CLD_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getProcessorStatus('D'), 0) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getProcessorStatus('D'), 0);
 }
 
 TEST_F(ProcessorTest, INS_CLI_TEST) {
@@ -939,7 +939,7 @@ TEST_F(ProcessorTest, INS_CLI_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getProcessorStatus('I'), 0) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getProcessorStatus('I'), 0);
 }
 
 TEST_F(ProcessorTest, INS_CLV_TEST) {
@@ -948,7 +948,7 @@ TEST_F(ProcessorTest, INS_CLV_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getProcessorStatus('V'), 0) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 }
 
 TEST_F(ProcessorTest, INS_SEC_TEST) {
@@ -957,7 +957,7 @@ TEST_F(ProcessorTest, INS_SEC_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
 }
 
 TEST_F(ProcessorTest, INS_SED_TEST) {
@@ -966,7 +966,7 @@ TEST_F(ProcessorTest, INS_SED_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getProcessorStatus('D'), 1) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getProcessorStatus('D'), 1);
 }
 
 TEST_F(ProcessorTest, INS_SEI_TEST) {
@@ -975,5 +975,145 @@ TEST_F(ProcessorTest, INS_SEI_TEST) {
 
     processor->execute(2);
 
-    EXPECT_EQ(processor->getProcessorStatus('I'), 1) << "Wrong accumulator status, operation failed";
+    EXPECT_EQ(processor->getProcessorStatus('I'), 1);
+}
+
+TEST_F(ProcessorTest, INS_TAX_TEST) {
+
+    processor->setRegisterValue('A', 0x24);
+    processor->setMemoryByte(0xFFFC, 0xAA);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x24);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x00);
+    processor->setMemoryByte(0xFFFC, 0xAA);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x00);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0xFE);
+    processor->setMemoryByte(0xFFFC, 0xAA);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('X'), 0xFE);
+}
+
+TEST_F(ProcessorTest, INS_TAY_TEST) {
+
+    processor->setRegisterValue('A', 0x24);
+    processor->setMemoryByte(0xFFFC, 0xA8);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x24);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x00);
+    processor->setMemoryByte(0xFFFC, 0xA8);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0x00);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0xFE);
+    processor->setMemoryByte(0xFFFC, 0xA8);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('Y'), 0xFE);
+}
+
+TEST_F(ProcessorTest, INS_TXA_TEST) {
+
+    processor->setRegisterValue('X', 0x24);
+    processor->setMemoryByte(0xFFFC, 0x8A);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x24);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0x00);
+    processor->setMemoryByte(0xFFFC, 0x8A);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0xFE);
+    processor->setMemoryByte(0xFFFC, 0x8A);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFE);
+}
+
+TEST_F(ProcessorTest, INS_TYA_TEST) {
+
+    processor->setRegisterValue('Y', 0x24);
+    processor->setMemoryByte(0xFFFC, 0x98);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x24);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('Y', 0x00);
+    processor->setMemoryByte(0xFFFC, 0x98);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('Y', 0xFE);
+    processor->setMemoryByte(0xFFFC, 0x98);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('A'), 0xFE);
+}
+
+TEST_F(ProcessorTest, INS_TSX_TEST) {
+
+    processor->setStackPointer(0x24);
+    processor->setMemoryByte(0xFFFC, 0xBA);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x24);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+
+    processor->resetCPU();
+
+    processor->setStackPointer(0x00);
+    processor->setMemoryByte(0xFFFC, 0xBA);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('X'), 0x00);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+
+    processor->resetCPU();
+
+    processor->setStackPointer(0xFE);
+    processor->setMemoryByte(0xFFFC, 0xBA);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getRegisterValue('X'), 0xFE);
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+}
+
+TEST_F(ProcessorTest, INS_TXS_TEST) {
+
+    processor->setRegisterValue('X', 0x24);
+    processor->setMemoryByte(0xFFFC, 0x9A);
+
+    processor->execute(2);
+    EXPECT_EQ(processor->getStackPointer(), 0x0124);
 }

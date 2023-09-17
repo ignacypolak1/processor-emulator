@@ -43,7 +43,13 @@ Processor::Processor::Processor() {
             {INS_CLV, &Processor::INS_CLV_HANDLE},
             {INS_SEC, &Processor::INS_SEC_HANDLE},
             {INS_SED, &Processor::INS_SED_HANDLE},
-            {INS_SEI, &Processor::INS_SEI_HANDLE}
+            {INS_SEI, &Processor::INS_SEI_HANDLE},
+            {INS_TAX, &Processor::INS_TAX_HANDLE},
+            {INS_TAY, &Processor::INS_TAY_HANDLE},
+            {INS_TXA, &Processor::INS_TXA_HANDLE},
+            {INS_TYA, &Processor::INS_TYA_HANDLE},
+            {INS_TSX, &Processor::INS_TSX_HANDLE},
+            {INS_TXS, &Processor::INS_TXS_HANDLE}
     };
 }
 
@@ -108,8 +114,8 @@ void Processor::Processor::setProgramCounter(const Word& address, const std::opt
 *
 * @param values Value to set in stack register.
 */
-void Processor::Processor::setStackPointer(const Word &value) {
-    stack_pointer = value;
+void Processor::Processor::setStackPointer(const Byte &value) {
+    stack_pointer = 0x0100 | value;
 }
 
 /**
@@ -168,7 +174,7 @@ void Processor::Memory::initialize() {
 void Processor::Processor::resetCPU() {
 
     setProgramCounter(0xFFFC); // Reset Vector Address
-    setStackPointer(0x0100); // First Stack Access Address
+    setStackPointer(0x00); // First Stack Access Address
     memory.initialize(); // Initialize Memory
 
     for(const auto& pair : registers) { // Reset All General Purpose Registers
