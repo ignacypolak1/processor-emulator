@@ -3,54 +3,6 @@
 
 Processor::Processor::Processor() {
     resetCPU();
-
-    instructionMap = {
-            {INS_LDA_IMMEDIATE, &Processor::INS_LDA_IMMEDIATE_HANDLE},
-            {INS_LDA_ABSOLUTE, &Processor::INS_LDA_ABSOLUTE_HANDLE},
-            {INS_LDA_ABSOLUTE_X, &Processor::INS_LDA_ABSOLUTE_X_HANDLE},
-            {INS_LDA_ABSOLUTE_Y, &Processor::INS_LDA_ABSOLUTE_Y_HANDLE},
-            {INS_LDA_ZEROPAGE, &Processor::INS_LDA_ZEROPAGE_HANDLE},
-            {INS_LDA_ZEROPAGE_X, &Processor::INS_LDA_ZEROPAGE_X_HANDLE},
-            {INS_LDA_INDEXED_INDIRECT, &Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
-            {INS_LDA_INDIRECT_INDEXED, &Processor::INS_LDA_INDIRECT_INDEXED_HANDLE},
-            {INS_LDX_IMMEDIATE, &Processor::INS_LDX_IMMEDIATE_HANDLE},
-            {INS_LDX_ABSOLUTE, &Processor::INS_LDX_ABSOLUTE_HANDLE},
-            {INS_LDX_ABSOLUTE_Y, &Processor::INS_LDX_ABSOLUTE_Y_HANDLE},
-            {INS_LDX_ZEROPAGE, &Processor::INS_LDX_ZEROPAGE_HANDLE},
-            {INS_LDX_ZEROPAGE_Y, &Processor::INS_LDX_ZEROPAGE_Y_HANDLE},
-            {INS_LDY_IMMEDIATE, &Processor::INS_LDY_IMMEDIATE_HANDLE},
-            {INS_LDY_ABSOLUTE, &Processor::INS_LDY_ABSOLUTE_HANDLE},
-            {INS_LDY_ABSOLUTE_X, &Processor::INS_LDY_ABSOLUTE_X_HANDLE},
-            {INS_LDY_ZEROPAGE, &Processor::INS_LDY_ZEROPAGE_HANDLE},
-            {INS_LDY_ZEROPAGE_X, &Processor::INS_LDY_ZEROPAGE_X_HANDLE},
-            {INS_JSR, &Processor::INS_JSR_HANDLE},
-            {INS_STA_ABSOLUTE, &Processor::INS_STA_ABSOLUTE_HANDLE},
-            {INS_STA_ABSOLUTE_X, &Processor::INS_STA_ABSOLUTE_X_HANDLE},
-            {INS_STA_ABSOLUTE_Y, &Processor::INS_STA_ABSOLUTE_Y_HANDLE},
-            {INS_STA_ZEROPAGE, &Processor::INS_STA_ZEROPAGE_HANDLE},
-            {INS_STA_ZEROPAGE_X, &Processor::INS_STA_ZEROPAGE_X_HANDLE},
-            {INS_STA_INDEXED_INDIRECT, &Processor::INS_STA_INDEXED_INDIRECT_HANDLE},
-            {INS_STA_INDIRECT_INDEXED, &Processor::INS_STA_INDIRECT_INDEXED_HANDLE},
-            {INS_STX_ABSOLUTE, &Processor::INS_STX_ABSOLUTE_HANDLE},
-            {INS_STX_ZEROPAGE, &Processor::INS_STX_ZEROPAGE_HANDLE},
-            {INS_STX_ZEROPAGE_Y, &Processor::INS_STX_ZEROPAGE_Y_HANDLE},
-            {INS_STY_ABSOLUTE, &Processor::INS_STY_ABSOLUTE_HANDLE},
-            {INS_STY_ZEROPAGE, &Processor::INS_STY_ZEROPAGE_HANDLE},
-            {INS_STY_ZEROPAGE_X, &Processor::INS_STY_ZEROPAGE_X_HANDLE},
-            {INS_CLC, &Processor::INS_CLC_HANDLE},
-            {INS_CLD, &Processor::INS_CLD_HANDLE},
-            {INS_CLI, &Processor::INS_CLI_HANDLE},
-            {INS_CLV, &Processor::INS_CLV_HANDLE},
-            {INS_SEC, &Processor::INS_SEC_HANDLE},
-            {INS_SED, &Processor::INS_SED_HANDLE},
-            {INS_SEI, &Processor::INS_SEI_HANDLE},
-            {INS_TAX, &Processor::INS_TAX_HANDLE},
-            {INS_TAY, &Processor::INS_TAY_HANDLE},
-            {INS_TXA, &Processor::INS_TXA_HANDLE},
-            {INS_TYA, &Processor::INS_TYA_HANDLE},
-            {INS_TSX, &Processor::INS_TSX_HANDLE},
-            {INS_TXS, &Processor::INS_TXS_HANDLE}
-    };
 }
 
 Processor::Processor::~Processor() {}

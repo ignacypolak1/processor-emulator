@@ -1,8 +1,54 @@
 #include "../include/instructions.h"
 
 #define NEGATIVE_MASK 0x80
-#define WORD_LSB_MASK 0xFF00
-#define WORD_MSB_MASK 0x00FF
+
+std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::Processor::instructionMap = {
+        {INS_LDA_IMMEDIATE, &Processor::Processor::INS_LDA_IMMEDIATE_HANDLE},
+        {INS_LDA_ABSOLUTE, &Processor::Processor::INS_LDA_ABSOLUTE_HANDLE},
+        {INS_LDA_ABSOLUTE_X, &Processor::Processor::INS_LDA_ABSOLUTE_X_HANDLE},
+        {INS_LDA_ABSOLUTE_Y, &Processor::Processor::INS_LDA_ABSOLUTE_Y_HANDLE},
+        {INS_LDA_ZEROPAGE, &Processor::Processor::INS_LDA_ZEROPAGE_HANDLE},
+        {INS_LDA_ZEROPAGE_X, &Processor::Processor::INS_LDA_ZEROPAGE_X_HANDLE},
+        {INS_LDA_INDEXED_INDIRECT, &Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE},
+        {INS_LDA_INDIRECT_INDEXED, &Processor::Processor::INS_LDA_INDIRECT_INDEXED_HANDLE},
+        {INS_LDX_IMMEDIATE, &Processor::Processor::INS_LDX_IMMEDIATE_HANDLE},
+        {INS_LDX_ABSOLUTE, &Processor::Processor::INS_LDX_ABSOLUTE_HANDLE},
+        {INS_LDX_ABSOLUTE_Y, &Processor::Processor::INS_LDX_ABSOLUTE_Y_HANDLE},
+        {INS_LDX_ZEROPAGE, &Processor::Processor::INS_LDX_ZEROPAGE_HANDLE},
+        {INS_LDX_ZEROPAGE_Y, &Processor::Processor::INS_LDX_ZEROPAGE_Y_HANDLE},
+        {INS_LDY_IMMEDIATE, &Processor::Processor::INS_LDY_IMMEDIATE_HANDLE},
+        {INS_LDY_ABSOLUTE, &Processor::Processor::INS_LDY_ABSOLUTE_HANDLE},
+        {INS_LDY_ABSOLUTE_X, &Processor::Processor::INS_LDY_ABSOLUTE_X_HANDLE},
+        {INS_LDY_ZEROPAGE, &Processor::Processor::INS_LDY_ZEROPAGE_HANDLE},
+        {INS_LDY_ZEROPAGE_X, &Processor::Processor::INS_LDY_ZEROPAGE_X_HANDLE},
+        {INS_JSR, &Processor::Processor::INS_JSR_HANDLE},
+        {INS_STA_ABSOLUTE, &Processor::Processor::INS_STA_ABSOLUTE_HANDLE},
+        {INS_STA_ABSOLUTE_X, &Processor::Processor::INS_STA_ABSOLUTE_X_HANDLE},
+        {INS_STA_ABSOLUTE_Y, &Processor::Processor::INS_STA_ABSOLUTE_Y_HANDLE},
+        {INS_STA_ZEROPAGE, &Processor::Processor::INS_STA_ZEROPAGE_HANDLE},
+        {INS_STA_ZEROPAGE_X, &Processor::Processor::INS_STA_ZEROPAGE_X_HANDLE},
+        {INS_STA_INDEXED_INDIRECT, &Processor::Processor::INS_STA_INDEXED_INDIRECT_HANDLE},
+        {INS_STA_INDIRECT_INDEXED, &Processor::Processor::INS_STA_INDIRECT_INDEXED_HANDLE},
+        {INS_STX_ABSOLUTE, &Processor::Processor::INS_STX_ABSOLUTE_HANDLE},
+        {INS_STX_ZEROPAGE, &Processor::Processor::INS_STX_ZEROPAGE_HANDLE},
+        {INS_STX_ZEROPAGE_Y, &Processor::Processor::INS_STX_ZEROPAGE_Y_HANDLE},
+        {INS_STY_ABSOLUTE, &Processor::Processor::INS_STY_ABSOLUTE_HANDLE},
+        {INS_STY_ZEROPAGE, &Processor::Processor::INS_STY_ZEROPAGE_HANDLE},
+        {INS_STY_ZEROPAGE_X, &Processor::Processor::INS_STY_ZEROPAGE_X_HANDLE},
+        {INS_CLC, &Processor::Processor::INS_CLC_HANDLE},
+        {INS_CLD, &Processor::Processor::INS_CLD_HANDLE},
+        {INS_CLI, &Processor::Processor::INS_CLI_HANDLE},
+        {INS_CLV, &Processor::Processor::INS_CLV_HANDLE},
+        {INS_SEC, &Processor::Processor::INS_SEC_HANDLE},
+        {INS_SED, &Processor::Processor::INS_SED_HANDLE},
+        {INS_SEI, &Processor::Processor::INS_SEI_HANDLE},
+        {INS_TAX, &Processor::Processor::INS_TAX_HANDLE},
+        {INS_TAY, &Processor::Processor::INS_TAY_HANDLE},
+        {INS_TXA, &Processor::Processor::INS_TXA_HANDLE},
+        {INS_TYA, &Processor::Processor::INS_TYA_HANDLE},
+        {INS_TSX, &Processor::Processor::INS_TSX_HANDLE},
+        {INS_TXS, &Processor::Processor::INS_TXS_HANDLE}
+};
 
 void set_flags(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
 
