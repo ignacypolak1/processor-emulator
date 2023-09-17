@@ -54,7 +54,6 @@ namespace Processor {
                 {'N', 1}
         };
 
-
         void INS_LDA_IMMEDIATE_HANDLE(Dword&, const Dword&);
         void INS_LDA_ABSOLUTE_HANDLE(Dword&, const Dword&);
         void INS_LDA_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
