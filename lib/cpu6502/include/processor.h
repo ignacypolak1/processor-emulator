@@ -49,6 +49,14 @@
 #define INS_STY_ZEROPAGE 0x84
 #define INS_STY_ZEROPAGE_X 0x94
 
+#define INS_CLC 0x18
+#define INS_CLD 0xD8
+#define INS_CLI 0x58
+#define INS_CLV 0xB8
+#define INS_SEC 0x38
+#define INS_SED 0xF8
+#define INS_SEI 0x78
+
 #define INS_JSR 0x20
 
 #define MAX_MEMORY (1024*64)
@@ -129,6 +137,14 @@ namespace Processor {
         void INS_STY_ABSOLUTE_HANDLE(Dword&, const Dword&);
         void INS_STY_ZEROPAGE_HANDLE(Dword&, const Dword&);
         void INS_STY_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+
+        void INS_CLC_HANDLE(Dword&, const Dword&);
+        void INS_CLD_HANDLE(Dword&, const Dword&);
+        void INS_CLI_HANDLE(Dword&, const Dword&);
+        void INS_CLV_HANDLE(Dword&, const Dword&);
+        void INS_SEC_HANDLE(Dword&, const Dword&);
+        void INS_SED_HANDLE(Dword&, const Dword&);
+        void INS_SEI_HANDLE(Dword&, const Dword&);
 
         void INS_JSR_HANDLE(Dword&, const Dword&);
 

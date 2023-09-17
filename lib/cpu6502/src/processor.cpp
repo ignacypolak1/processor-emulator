@@ -36,7 +36,14 @@ Processor::Processor::Processor() {
             {INS_STX_ZEROPAGE_Y, &Processor::INS_STX_ZEROPAGE_Y_HANDLE},
             {INS_STY_ABSOLUTE, &Processor::INS_STY_ABSOLUTE_HANDLE},
             {INS_STY_ZEROPAGE, &Processor::INS_STY_ZEROPAGE_HANDLE},
-            {INS_STY_ZEROPAGE_X, &Processor::INS_STY_ZEROPAGE_X_HANDLE}
+            {INS_STY_ZEROPAGE_X, &Processor::INS_STY_ZEROPAGE_X_HANDLE},
+            {INS_CLC, &Processor::INS_CLC_HANDLE},
+            {INS_CLD, &Processor::INS_CLD_HANDLE},
+            {INS_CLI, &Processor::INS_CLI_HANDLE},
+            {INS_CLV, &Processor::INS_CLV_HANDLE},
+            {INS_SEC, &Processor::INS_SEC_HANDLE},
+            {INS_SED, &Processor::INS_SED_HANDLE},
+            {INS_SEI, &Processor::INS_SEI_HANDLE}
     };
 }
 

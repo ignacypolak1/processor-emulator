@@ -232,6 +232,7 @@ void Processor::Processor::INS_STA_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
     Word address = fetchWord(cycles, requested_cycles, "INS_STA_ABSOLUTE_X");
     Byte regAValue = getRegisterValue('A');
     Byte regXValue = getRegisterValue('X');
+    cycles--;
     writeByte(address+regXValue, regAValue, cycles, requested_cycles, "INS_STA_ABSOLUTE_X");
 }
 
@@ -239,6 +240,7 @@ void Processor::Processor::INS_STA_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
     Word address = fetchWord(cycles, requested_cycles, "INS_STA_ABSOLUTE_Y");
     Byte regAValue = getRegisterValue('A');
     Byte regYValue = getRegisterValue('Y');
+    cycles--;
     writeByte(address+regYValue, regAValue, cycles, requested_cycles, "INS_STA_ABSOLUTE_Y");
 }
 
@@ -254,7 +256,7 @@ void Processor::Processor::INS_STA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     Byte regXValue = getRegisterValue('X');
 
     address = (address + regXValue) % 256;
-
+    cycles--;
     writeByte(address, regAValue, cycles, requested_cycles, "INS_STA_ZEROPAGE_X");
 }
 
@@ -262,7 +264,7 @@ void Processor::Processor::INS_STA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     Word address = fetchByte(cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
     Byte regAValue = getRegisterValue('A');
     Byte regXValue = getRegisterValue('X');
-
+    cycles--;
     Word valueAddress = readWord(address+regXValue, cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
     writeByte(valueAddress, regAValue, cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
 }
@@ -271,7 +273,7 @@ void Processor::Processor::INS_STA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Word address = fetchByte(cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
     Byte regAValue = getRegisterValue('A');
     Byte regYValue = getRegisterValue('Y');
-
+    cycles--;
     Word valueAddress = readWord(address, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
     writeByte(valueAddress+regYValue, regAValue, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
 }
@@ -294,6 +296,7 @@ void Processor::Processor::INS_STX_ZEROPAGE_Y_HANDLE(Dword &cycles, const Dword 
     Byte regYValue = getRegisterValue('Y');
 
     address = (address + regYValue) % 256;
+    cycles--;
     writeByte(address, value, cycles, requested_cycles, "INS_STX_ZEROPAGE_Y");
 }
 
@@ -315,5 +318,62 @@ void Processor::Processor::INS_STY_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     Byte regXValue = getRegisterValue('X');
 
     address = (address + regXValue) % 256;
+    cycles--;
     writeByte(address, value, cycles, requested_cycles, "INS_STX_ZEROPAGE_Y");
+}
+
+void Processor::Processor::INS_CLC_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    setProcessorStatus('C', 0);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Resetting Carry Flag\n", requested_cycles-cycles, "INS_CLC");
+    #endif
+    cycles-=1;
+}
+
+void Processor::Processor::INS_CLD_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    setProcessorStatus('D', 0);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Resetting Decimal Flag\n", requested_cycles-cycles, "INS_CLD");
+    #endif
+    cycles-=1;
+}
+
+void Processor::Processor::INS_CLI_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    setProcessorStatus('I', 0);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Resetting Interrupt Flag\n", requested_cycles-cycles, "INS_CLI");
+    #endif
+    cycles-=1;
+}
+
+void Processor::Processor::INS_CLV_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    setProcessorStatus('V', 0);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles-cycles, "INS_CLV");
+    #endif
+    cycles-=1;
+}
+
+void Processor::Processor::INS_SEC_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    setProcessorStatus('C', 1);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Setting Carry Flag\n", requested_cycles-cycles, "INS_SEC");
+    #endif
+    cycles-=1;
+}
+
+void Processor::Processor::INS_SED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    setProcessorStatus('D', 1);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Setting Decimal Flag\n", requested_cycles-cycles, "INS_SED");
+    #endif
+    cycles-=1;
+}
+
+void Processor::Processor::INS_SEI_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    setProcessorStatus('I', 1);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Setting Interrupt Flag\n", requested_cycles-cycles, "INS_SEI");
+    #endif
+    cycles-=1;
 }
