@@ -21,6 +21,14 @@
 #define INS_LDA_INDEXED_INDIRECT 0xA1
 #define INS_LDA_INDIRECT_INDEXED 0xB1
 
+#define INS_STA_ABSOLUTE 0x8D
+#define INS_STA_ABSOLUTE_X 0x9D
+#define INS_STA_ABSOLUTE_Y 0x99
+#define INS_STA_ZEROPAGE 0x85
+#define INS_STA_ZEROPAGE_X 0x95
+#define INS_STA_INDEXED_INDIRECT 0x81
+#define INS_STA_INDIRECT_INDEXED 0x91
+
 #define INS_LDX_IMMEDIATE 0xA2
 #define INS_LDX_ABSOLUTE 0xAE
 #define INS_LDX_ABSOLUTE_Y 0xBE
@@ -32,6 +40,7 @@
 #define INS_LDY_ABSOLUTE_X 0xBC
 #define INS_LDY_ZEROPAGE 0xA4
 #define INS_LDY_ZEROPAGE_X 0xB4
+
 
 #define INS_JSR 0x20
 
@@ -85,6 +94,14 @@ namespace Processor {
         void INS_LDA_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
         void INS_LDA_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
         void INS_LDA_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
+
+        void INS_STA_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_STA_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_STA_ABSOLUTE_Y_HANDLE(Dword&, const Dword&);
+        void INS_STA_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_STA_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+        void INS_STA_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
+        void INS_STA_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
 
         void INS_LDX_IMMEDIATE_HANDLE(Dword&, const Dword&);
         void INS_LDX_ABSOLUTE_HANDLE(Dword&, const Dword&);

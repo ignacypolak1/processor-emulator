@@ -119,9 +119,10 @@ TEST(Processor, INS_LDA_ZEROPAGE_TEST) {
 TEST(Processor, INS_LDA_ZEROPAGE_X_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB5);
     processor->setMemoryByte(0xFFFD, 0x08);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x0A, 0x23);
 
     processor->execute(4);
@@ -132,9 +133,10 @@ TEST(Processor, INS_LDA_ZEROPAGE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB5);
     processor->setMemoryByte(0xFFFD, 0x08);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x0A, 0x00);
 
     processor->execute(4);
@@ -145,9 +147,10 @@ TEST(Processor, INS_LDA_ZEROPAGE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB5);
     processor->setMemoryByte(0xFFFD, 0x08);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x0A, 0xFB);
 
     processor->execute(4);
@@ -202,9 +205,10 @@ TEST(Processor, INS_LDA_ABSOLUTE_TEST) {
 TEST(Processor, INS_LDA_ABSOLUTE_X_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xBD);
     processor->setMemoryWord(0xFFFD, 0x4324);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x4326, 0x23);
 
     processor->execute(4);
@@ -215,9 +219,10 @@ TEST(Processor, INS_LDA_ABSOLUTE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xBD);
     processor->setMemoryWord(0xFFFD, 0x4324);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x4326, 0x00);
 
     processor->execute(4);
@@ -228,9 +233,10 @@ TEST(Processor, INS_LDA_ABSOLUTE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xBD);
     processor->setMemoryWord(0xFFFD, 0x4324);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x4326, 0xFB);
 
     processor->execute(4);
@@ -245,9 +251,10 @@ TEST(Processor, INS_LDA_ABSOLUTE_X_TEST) {
 TEST(Processor, INS_LDA_ABSOLUTE_Y_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('Y', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB9);
     processor->setMemoryWord(0xFFFD, 0x4324);
-    processor->setRegisterValue('Y', 0x02);
     processor->setMemoryByte(0x4326, 0x23);
 
     processor->execute(4);
@@ -258,9 +265,10 @@ TEST(Processor, INS_LDA_ABSOLUTE_Y_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB9);
     processor->setMemoryWord(0xFFFD, 0x4324);
-    processor->setRegisterValue('Y', 0x02);
     processor->setMemoryByte(0x4326, 0x00);
 
     processor->execute(4);
@@ -271,9 +279,10 @@ TEST(Processor, INS_LDA_ABSOLUTE_Y_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB9);
     processor->setMemoryWord(0xFFFD, 0x4324);
-    processor->setRegisterValue('Y', 0x02);
     processor->setMemoryByte(0x4326, 0xFB);
 
     processor->execute(4);
@@ -288,9 +297,10 @@ TEST(Processor, INS_LDA_ABSOLUTE_Y_TEST) {
 TEST(Processor, INS_LDA_INDEXED_INDIRECT_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xA1);
     processor->setMemoryWord(0xFFFD, 0x32);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x34, 0x22);
     processor->setMemoryByte(0x35, 0x23);
     processor->setMemoryByte(0x2322, 0x46);
@@ -303,9 +313,10 @@ TEST(Processor, INS_LDA_INDEXED_INDIRECT_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xA1);
     processor->setMemoryWord(0xFFFD, 0x32);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x34, 0x22);
     processor->setMemoryByte(0x35, 0x23);
     processor->setMemoryByte(0x2322, 0x00);
@@ -318,9 +329,10 @@ TEST(Processor, INS_LDA_INDEXED_INDIRECT_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xA1);
     processor->setMemoryWord(0xFFFD, 0x32);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x34, 0x22);
     processor->setMemoryByte(0x35, 0x23);
     processor->setMemoryByte(0x2322, 0xFB);
@@ -337,12 +349,13 @@ TEST(Processor, INS_LDA_INDEXED_INDIRECT_TEST) {
 TEST(Processor, INS_LDA_INDIRECT_INDEXED_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('Y', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xB1);
     processor->setMemoryWord(0xFFFD, 0x32);
     processor->setMemoryByte(0x32, 0x21);
     processor->setMemoryByte(0x33, 0x25);
-    processor->setMemoryByte(0x2521, 0x23);
-    processor->setRegisterValue('Y', 0x02);
+    processor->setMemoryByte(0x2522, 0x25);
 
     processor->execute(5);
 
@@ -352,12 +365,13 @@ TEST(Processor, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xB1);
     processor->setMemoryWord(0xFFFD, 0x32);
     processor->setMemoryByte(0x32, 0x21);
     processor->setMemoryByte(0x33, 0x25);
-    processor->setMemoryByte(0x2521, 0x00);
-    processor->setRegisterValue('Y', 0x00);
+    processor->setMemoryByte(0x2522, 0x00);
 
     processor->execute(5);
 
@@ -367,12 +381,13 @@ TEST(Processor, INS_LDA_INDIRECT_INDEXED_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xB1);
     processor->setMemoryWord(0xFFFD, 0x32);
     processor->setMemoryByte(0x32, 0x21);
     processor->setMemoryByte(0x33, 0x25);
-    processor->setMemoryByte(0x2521, 0xFA);
-    processor->setRegisterValue('Y', 0x01);
+    processor->setMemoryByte(0x2522, 0xFB);
 
     processor->execute(5);
 
@@ -463,9 +478,10 @@ TEST(Processor, INS_LDX_ABSOLUTE_TEST) {
 TEST(Processor, INS_LDX_ABSOLUTE_Y_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('Y', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xBE);
     processor->setMemoryWord(0xFFFD, 0x2541);
-    processor->setRegisterValue('Y', 0x01);
     processor->setMemoryByte(0x2542, 0x52);
 
     processor->execute(4);
@@ -476,9 +492,10 @@ TEST(Processor, INS_LDX_ABSOLUTE_Y_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xBE);
     processor->setMemoryWord(0xFFFD, 0x2541);
-    processor->setRegisterValue('Y', 0x01);
     processor->setMemoryByte(0x2542, 0x00);
 
     processor->execute(4);
@@ -489,9 +506,10 @@ TEST(Processor, INS_LDX_ABSOLUTE_Y_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xBE);
     processor->setMemoryWord(0xFFFD, 0x2541);
-    processor->setRegisterValue('Y', 0x01);
     processor->setMemoryByte(0x2542, 0xFD);
 
     processor->execute(4);
@@ -546,9 +564,10 @@ TEST(Processor, INS_LDX_ZEROPAGE_TEST) {
 TEST(Processor, INS_LDX_ZEROPAGE_Y_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('Y', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB6);
     processor->setMemoryByte(0xFFFD, 0x25);
-    processor->setRegisterValue('Y', 0x02);
     processor->setMemoryByte(0x27, 0x52);
 
     processor->execute(4);
@@ -559,9 +578,10 @@ TEST(Processor, INS_LDX_ZEROPAGE_Y_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB6);
     processor->setMemoryByte(0xFFFD, 0x25);
-    processor->setRegisterValue('Y', 0x02);
     processor->setMemoryByte(0x27, 0x00);
 
     processor->execute(4);
@@ -572,9 +592,10 @@ TEST(Processor, INS_LDX_ZEROPAGE_Y_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('Y', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB6);
     processor->setMemoryByte(0xFFFD, 0x25);
-    processor->setRegisterValue('Y', 0x02);
     processor->setMemoryByte(0x27, 0xFD);
 
     processor->execute(4);
@@ -666,9 +687,10 @@ TEST(Processor, INS_LDY_ABSOLUTE_TEST) {
 TEST(Processor, INS_LDY_ABSOLUTE_X_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('X', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xBC);
     processor->setMemoryWord(0xFFFD, 0x2541);
-    processor->setRegisterValue('X', 0x01);
     processor->setMemoryByte(0x2542, 0x52);
 
     processor->execute(4);
@@ -679,9 +701,10 @@ TEST(Processor, INS_LDY_ABSOLUTE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xBC);
     processor->setMemoryWord(0xFFFD, 0x2541);
-    processor->setRegisterValue('X', 0x01);
     processor->setMemoryByte(0x2542, 0x00);
 
     processor->execute(4);
@@ -692,9 +715,10 @@ TEST(Processor, INS_LDY_ABSOLUTE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x01);
+
     processor->setMemoryByte(0xFFFC, 0xBC);
     processor->setMemoryWord(0xFFFD, 0x2541);
-    processor->setRegisterValue('X', 0x01);
     processor->setMemoryByte(0x2542, 0xFD);
 
     processor->execute(4);
@@ -749,9 +773,10 @@ TEST(Processor, INS_LDY_ZEROPAGE_TEST) {
 TEST(Processor, INS_LDY_ZEROPAGE_X_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB4);
     processor->setMemoryByte(0xFFFD, 0x25);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x27, 0x52);
 
     processor->execute(4);
@@ -762,9 +787,10 @@ TEST(Processor, INS_LDY_ZEROPAGE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB4);
     processor->setMemoryByte(0xFFFD, 0x25);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x27, 0x00);
 
     processor->execute(4);
@@ -775,9 +801,10 @@ TEST(Processor, INS_LDY_ZEROPAGE_X_TEST) {
 
     processor->resetCPU();
 
+    processor->setRegisterValue('X', 0x02);
+
     processor->setMemoryByte(0xFFFC, 0xB4);
     processor->setMemoryByte(0xFFFD, 0x25);
-    processor->setRegisterValue('X', 0x02);
     processor->setMemoryByte(0x27, 0xFD);
 
     processor->execute(4);
@@ -789,6 +816,7 @@ TEST(Processor, INS_LDY_ZEROPAGE_X_TEST) {
     delete processor;
 }
 
+
 TEST(Processor, INS_JSR_TEST) {
     Processor::Processor *processor = new Processor::Processor();
 
@@ -798,6 +826,118 @@ TEST(Processor, INS_JSR_TEST) {
     processor->execute(6);
 
     EXPECT_EQ(processor->getProgramCounter(), 0x4243) << "Wrong program counter value, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STA_ABSOLUTE_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('A', 0x23);
+
+    processor->setMemoryByte(0xFFFC, 0x8D);
+    processor->setMemoryWord(0xFFFD, 0x4324);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getMemory()[0x4324], 0x23) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STA_ABSOLUTE_X_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('X', 0x02);
+    processor->setRegisterValue('A', 0x23);
+
+    processor->setMemoryByte(0xFFFC, 0x9D);
+    processor->setMemoryWord(0xFFFD, 0x4324);
+
+    processor->execute(5);
+
+    EXPECT_EQ(processor->getMemory()[0x4326], 0x23) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STA_ABSOLUTE_Y_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('Y', 0x02);
+    processor->setRegisterValue('A', 0x23);
+
+    processor->setMemoryByte(0xFFFC, 0x99);
+    processor->setMemoryWord(0xFFFD, 0x4324);
+
+    processor->execute(5);
+
+    EXPECT_EQ(processor->getMemory()[0x4326], 0x23) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STA_ZEROPAGE_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('A', 0x23);
+
+    processor->setMemoryByte(0xFFFC, 0x85);
+    processor->setMemoryByte(0xFFFD, 0x0024);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getMemory()[0x0024], 0x23) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STA_ZEROPAGE_X_TEST) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('X', 0x02);
+    processor->setRegisterValue('A', 0x23);
+
+    processor->setMemoryByte(0xFFFC, 0x95);
+    processor->setMemoryByte(0xFFFD, 0x24);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getMemory()[0x0026], 0x23) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STA_ZEROPAGE_INDEXED_INDIRECT) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('X', 0x02);
+    processor->setRegisterValue('A', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x81);
+    processor->setMemoryByte(0xFFFD, 0x23);
+    processor->setMemoryWord(0x25, 0x3421);
+
+    processor->execute(6);
+
+    EXPECT_EQ(processor->getMemory()[0x3421], 0x28) << "Wrong accumulator status, operation failed";
+
+    delete processor;
+}
+
+TEST(Processor, INS_STA_ZEROPAGE_INDIRECT_INDEXED) {
+    Processor::Processor *processor = new Processor::Processor();
+
+    processor->setRegisterValue('Y', 0x02);
+    processor->setRegisterValue('A', 0x28);
+
+    processor->setMemoryByte(0xFFFC, 0x91);
+    processor->setMemoryByte(0xFFFD, 0x23);
+    processor->setMemoryWord(0x23, 0x3421);
+
+    processor->execute(6);
+
+    EXPECT_EQ(processor->getMemory()[0x3423], 0x28) << "Wrong accumulator status, operation failed";
 
     delete processor;
 }

@@ -24,6 +24,13 @@ Processor::Processor::Processor() {
             {INS_LDY_ZEROPAGE, &Processor::INS_LDY_ZEROPAGE_HANDLE},
             {INS_LDY_ZEROPAGE_X, &Processor::INS_LDY_ZEROPAGE_X_HANDLE},
             {INS_JSR, &Processor::INS_JSR_HANDLE},
+            {INS_STA_ABSOLUTE, &Processor::INS_STA_ABSOLUTE_HANDLE},
+            {INS_STA_ABSOLUTE_X, &Processor::INS_STA_ABSOLUTE_X_HANDLE},
+            {INS_STA_ABSOLUTE_Y, &Processor::INS_STA_ABSOLUTE_Y_HANDLE},
+            {INS_STA_ZEROPAGE, &Processor::INS_STA_ZEROPAGE_HANDLE},
+            {INS_STA_ZEROPAGE_X, &Processor::INS_STA_ZEROPAGE_X_HANDLE},
+            {INS_STA_INDEXED_INDIRECT, &Processor::INS_STA_INDEXED_INDIRECT_HANDLE},
+            {INS_STA_INDIRECT_INDEXED, &Processor::INS_STA_INDIRECT_INDEXED_HANDLE}
     };
 }
 

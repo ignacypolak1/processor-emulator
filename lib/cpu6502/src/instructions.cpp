@@ -115,18 +115,18 @@ void Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     set_flags(this, value, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
     setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
 }
+
 void Processor::Processor::INS_LDA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte address = fetchByte(cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
     Byte regYValue = getRegisterValue('Y');
 
-    if(bAddressesOnDifferentPages(address, address+regYValue)) {
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
+
+    if(bAddressesOnDifferentPages(valueAddress, valueAddress+regYValue)) {
         cycles--;
     }
 
-    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
-    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
-
-    value += regYValue;
+    Byte value = readByte(valueAddress + regYValue, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
 
     set_flags(this, value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
     setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
@@ -220,4 +220,58 @@ void Processor::Processor::INS_LDY_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 
     set_flags(this, value, cycles, requested_cycles, "INS_LDY_ZEROPAGE_X");
     setRegisterValue('Y', value, cycles, requested_cycles, "INS_LDY_ZEROPAGE_X");
+}
+
+void Processor::Processor::INS_STA_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_STA_ABSOLUTE");
+    Byte regAValue = getRegisterValue('A');
+    writeByte(address, regAValue, cycles, requested_cycles, "INS_STA_ABSOLUTE");
+}
+
+void Processor::Processor::INS_STA_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_STA_ABSOLUTE_X");
+    Byte regAValue = getRegisterValue('A');
+    Byte regXValue = getRegisterValue('X');
+    writeByte(address+regXValue, regAValue, cycles, requested_cycles, "INS_STA_ABSOLUTE_X");
+}
+
+void Processor::Processor::INS_STA_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_STA_ABSOLUTE_Y");
+    Byte regAValue = getRegisterValue('A');
+    Byte regYValue = getRegisterValue('Y');
+    writeByte(address+regYValue, regAValue, cycles, requested_cycles, "INS_STA_ABSOLUTE_Y");
+}
+
+void Processor::Processor::INS_STA_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STA_ZEROPAGE");
+    Byte regAValue = getRegisterValue('A');
+    writeByte(address, regAValue, cycles, requested_cycles, "INS_STA_ZEROPAGE");
+}
+
+void Processor::Processor::INS_STA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STA_ZEROPAGE_X");
+    Byte regAValue = getRegisterValue('A');
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 256;
+
+    writeByte(address, regAValue, cycles, requested_cycles, "INS_STA_ZEROPAGE_X");
+}
+
+void Processor::Processor::INS_STA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchByte(cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
+    Byte regAValue = getRegisterValue('A');
+    Byte regXValue = getRegisterValue('X');
+
+    Word valueAddress = readWord(address+regXValue, cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
+    writeByte(valueAddress, regAValue, cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
+}
+
+void Processor::Processor::INS_STA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchByte(cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
+    Byte regAValue = getRegisterValue('A');
+    Byte regYValue = getRegisterValue('Y');
+
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
+    writeByte(valueAddress+regYValue, regAValue, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
 }
