@@ -67,7 +67,6 @@
 
 #define INS_INX 0xE8
 #define INS_DEX 0xCA
-
 #define INS_INY 0xC8
 #define INS_DEY 0x88
 

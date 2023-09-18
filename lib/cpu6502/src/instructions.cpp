@@ -55,7 +55,11 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_DEC_ZEROPAGE, &Processor::Processor::INS_DEC_ZEROPAGE_HANDLE},
         {INS_DEC_ZEROPAGE_X, &Processor::Processor::INS_DEC_ZEROPAGE_X_HANDLE},
         {INS_DEC_ABSOLUTE, &Processor::Processor::INS_DEC_ABSOLUTE_HANDLE},
-        {INS_DEC_ABSOLUTE_X, &Processor::Processor::INS_DEC_ABSOLUTE_X_HANDLE}
+        {INS_DEC_ABSOLUTE_X, &Processor::Processor::INS_DEC_ABSOLUTE_X_HANDLE},
+        {INS_INX, &Processor::Processor::INS_INX_HANDLE},
+        {INS_DEX, &Processor::Processor::INS_DEX_HANDLE},
+        {INS_INY, &Processor::Processor::INS_INY_HANDLE},
+        {INS_DEY, &Processor::Processor::INS_DEY_HANDLE}
 };
 
 void set_flags(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -558,4 +562,38 @@ void Processor::Processor::INS_DEC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
     cycles-=2;
     writeByte(address, value, cycles, requested_cycles, "INS_DEC_ABSOLUTE_X");
     set_flags(this, value, cycles, requested_cycles, "INS_DEC_ABSOLUTE_X");
+}
+
+//////////////////////////////////////////
+
+void Processor::Processor::INS_INX_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regXValue = getRegisterValue('X');
+    regXValue++;
+    cycles--;
+    setRegisterValue('X', regXValue, cycles, requested_cycles, "INS_INX");
+    set_flags(this, regXValue, cycles, requested_cycles, "INS_INX");
+}
+
+void Processor::Processor::INS_DEX_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regXValue = getRegisterValue('X');
+    regXValue--;
+    cycles--;
+    setRegisterValue('X', regXValue, cycles, requested_cycles, "INS_DEX");
+    set_flags(this, regXValue, cycles, requested_cycles, "INS_DEX");
+}
+
+void Processor::Processor::INS_INY_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regYValue = getRegisterValue('Y');
+    regYValue++;
+    cycles--;
+    setRegisterValue('Y', regYValue, cycles, requested_cycles, "INS_INY");
+    set_flags(this, regYValue, cycles, requested_cycles, "INS_INY");
+}
+
+void Processor::Processor::INS_DEY_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regYValue = getRegisterValue('Y');
+    regYValue--;
+    cycles--;
+    setRegisterValue('Y', regYValue, cycles, requested_cycles, "INS_DEY");
+    set_flags(this, regYValue, cycles, requested_cycles, "INS_DEY");
 }

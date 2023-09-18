@@ -116,6 +116,11 @@ namespace Processor {
         void INS_DEC_ABSOLUTE_HANDLE(Dword&, const Dword&);
         void INS_DEC_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
 
+        void INS_INX_HANDLE(Dword&, const Dword&);
+        void INS_DEX_HANDLE(Dword&, const Dword&);
+        void INS_INY_HANDLE(Dword&, const Dword&);
+        void INS_DEY_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
