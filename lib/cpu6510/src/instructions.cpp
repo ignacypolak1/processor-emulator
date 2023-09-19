@@ -76,6 +76,14 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_SBC_ABSOLUTE_Y, &Processor::Processor::INS_SBC_ABSOLUTE_Y_HANDLE},
         {INS_SBC_INDEXED_INDIRECT, &Processor::Processor::INS_SBC_INDEXED_INDIRECT_HANDLE},
         {INS_SBC_INDIRECT_INDEXED, &Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE},
+        {INS_CMP_IMMEDIATE, &Processor::Processor::INS_CMP_IMMEDIATE_HANDLE},
+        {INS_CMP_ZEROPAGE, &Processor::Processor::INS_CMP_ZEROPAGE_HANDLE},
+        {INS_CMP_ZEROPAGE_X, &Processor::Processor::INS_CMP_ZEROPAGE_X_HANDLE},
+        {INS_CMP_ABSOLUTE, &Processor::Processor::INS_CMP_ABSOLUTE_HANDLE},
+        {INS_CMP_ABSOLUTE_X, &Processor::Processor::INS_CMP_ABSOLUTE_X_HANDLE},
+        {INS_CMP_ABSOLUTE_Y, &Processor::Processor::INS_CMP_ABSOLUTE_Y_HANDLE},
+        {INS_CMP_INDEXED_INDIRECT, &Processor::Processor::INS_CMP_INDEXED_INDIRECT_HANDLE},
+        {INS_CMP_INDIRECT_INDEXED, &Processor::Processor::INS_CMP_INDIRECT_INDEXED_HANDLE}
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -131,7 +139,7 @@ void set_flags_C(Processor::Processor *processor, Processor::Byte value, Process
         }
     }
     else {
-        if(anotherValue>value) {
+        if(value >= anotherValue) {
             #ifdef DEBUG
                         printf("Cycle %i: %s: Setting Carry Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
@@ -264,7 +272,9 @@ void Processor::Processor::INS_LDA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     Byte address = fetchByte(cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
     Byte regXValue = getRegisterValue('X');
 
-    Word valueAddress = readWord(address + regXValue, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
+    address = (address + regXValue) % 256;
+
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
     Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_LDA_INDEXED_INDIRECT");
 
     cycles--; // Dummy cycle
@@ -282,8 +292,8 @@ void Processor::Processor::INS_LDA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     if(bAddressesOnDifferentPages(valueAddress, valueAddress+regYValue)) {
         cycles--;
     }
-
-    Byte value = readByte(valueAddress + regYValue, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
+    valueAddress = (valueAddress + regYValue) % 65536;
+    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
 
     set_flags_NZ(this, value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
     setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
@@ -418,21 +428,31 @@ void Processor::Processor::INS_STA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 }
 
 void Processor::Processor::INS_STA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Word address = fetchByte(cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
     Byte regAValue = getRegisterValue('A');
     Byte regXValue = getRegisterValue('X');
     cycles--;
-    Word valueAddress = readWord(address+regXValue, cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
+
+    address = (address + regXValue) % 256;
+
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
     writeByte(valueAddress, regAValue, cycles, requested_cycles, "INS_STA_INDEXED_INDIRECT");
 }
 
 void Processor::Processor::INS_STA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Word address = fetchByte(cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
+    Byte address = fetchByte(cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
     Byte regAValue = getRegisterValue('A');
     Byte regYValue = getRegisterValue('Y');
+
     cycles--;
+
     Word valueAddress = readWord(address, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
-    writeByte(valueAddress+regYValue, regAValue, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
+    if(bAddressesOnDifferentPages(valueAddress, valueAddress+regYValue)) {
+        cycles--;
+    }
+    valueAddress = (valueAddress + regYValue) % 65536;
+
+    writeByte(valueAddress, regAValue, cycles, requested_cycles, "INS_STA_INDIRECT_INDEXED");
 }
 
 void Processor::Processor::INS_STX_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -869,7 +889,7 @@ void Processor::Processor::INS_SBC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
@@ -878,7 +898,6 @@ void Processor::Processor::INS_SBC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-
 }
 
 void Processor::Processor::INS_SBC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -887,7 +906,7 @@ void Processor::Processor::INS_SBC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
@@ -908,7 +927,7 @@ void Processor::Processor::INS_SBC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
     cycles--;
 
     setRegisterValue('A', result);
@@ -927,7 +946,7 @@ void Processor::Processor::INS_SBC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
@@ -952,7 +971,7 @@ void Processor::Processor::INS_SBC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
@@ -977,7 +996,7 @@ void Processor::Processor::INS_SBC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
@@ -998,7 +1017,7 @@ void Processor::Processor::INS_SBC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
     cycles--;
 
     setRegisterValue('A', result);
@@ -1026,7 +1045,7 @@ void Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Byte regAValue = getRegisterValue('A');
     Byte carry = getProcessorStatus('C');
 
-    Byte result = regAValue + (~value) + 1 - carry;
+    Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
@@ -1035,5 +1054,120 @@ void Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
+}
+
+void Processor::Processor::INS_CMP_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte value = fetchByte(cycles, requested_cycles, "INS_CMP_IMMEDIATE");
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_IMMEDIATE");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_IMMEDIATE");
+}
+void Processor::Processor::INS_CMP_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_CMP_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_CMP_ZEROPAGE");
+
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_ZEROPAGE");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_ZEROPAGE");
+}
+void Processor::Processor::INS_CMP_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_CMP_ZEROPAGE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 256;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_CMP_ZEROPAGE_X");
+
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_ZEROPAGE_X");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_ZEROPAGE_X");
+}
+void Processor::Processor::INS_CMP_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_CMP_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_CMP_ABSOLUTE");
+
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_ABSOLUTE");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_ABSOLUTE");
+}
+void Processor::Processor::INS_CMP_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_CMP_ABSOLUTE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    if(bAddressesOnDifferentPages(address, address+regXValue)) {
+        cycles--;
+    }
+    address = (address + regXValue) % 65536;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_CMP_ABSOLUTE_X");
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_ABSOLUTE_X");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_ABSOLUTE_X");
+}
+void Processor::Processor::INS_CMP_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_CMP_ABSOLUTE_Y");
+    Byte regYValue = getRegisterValue('Y');
+
+    if(bAddressesOnDifferentPages(address, address+regYValue)) {
+        cycles--;
+    }
+    address = (address + regYValue) % 65536;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_CMP_ABSOLUTE_Y");
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_ABSOLUTE_X");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_ABSOLUTE_X");
+}
+void Processor::Processor::INS_CMP_INDEXED_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_CMP_INDEXED_INDIRECT");
+    Byte regYValue = getRegisterValue('X');
+
+    address = (address + regYValue) % 256;
+
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_CMP_INDEXED_INDIRECT");
+    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_CMP_INDEXED_INDIRECT");
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_INDEXED_INDIRECT");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_INDEXED_INDIRECT");
+}
+void Processor::Processor::INS_CMP_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
+    Byte regYValue = getRegisterValue('Y');
+
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
+
+    if(bAddressesOnDifferentPages(valueAddress, valueAddress+regYValue)) {
+        cycles--;
+    }
+    valueAddress = (valueAddress + regYValue) % 65536;
+
+    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
+    Byte regAValue = getRegisterValue('A');
+
+    Byte result = regAValue + (~value) + 1;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
+    set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
 }
 

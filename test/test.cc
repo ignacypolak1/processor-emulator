@@ -1879,6 +1879,7 @@ TEST_F(ProcessorTest, INS_ADC_INDIRECT_INDEXED) {
 
 TEST_F(ProcessorTest, INS_SBC_IMMEDIATE_TEST) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xE9);
     processor->setMemoryByte(0xFFFD, 0x02);
@@ -1888,7 +1889,7 @@ TEST_F(ProcessorTest, INS_SBC_IMMEDIATE_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -1904,7 +1905,7 @@ TEST_F(ProcessorTest, INS_SBC_IMMEDIATE_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -1917,6 +1918,7 @@ TEST_F(ProcessorTest, INS_SBC_IMMEDIATE_TEST) {
 
 TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_TEST) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xE5);
     processor->setMemoryByte(0xFFFD, 0x03);
@@ -1927,7 +1929,7 @@ TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -1944,7 +1946,7 @@ TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -1957,6 +1959,7 @@ TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_TEST) {
 
 TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_X_TEST) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('X', 0x01);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xF5);
@@ -1968,7 +1971,7 @@ TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_X_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -1986,7 +1989,7 @@ TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_X_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -1999,6 +2002,7 @@ TEST_F(ProcessorTest, INS_SBC_ZEROPAGE_X_TEST) {
 
 TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_TEST) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xED);
     processor->setMemoryWord(0xFFFD, 0x4354);
@@ -2009,7 +2013,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -2026,7 +2030,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -2039,6 +2043,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_TEST) {
 
 TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_X_TEST) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('X', 0x01);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xFD);
@@ -2050,7 +2055,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_X_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -2068,7 +2073,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_X_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -2081,6 +2086,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_X_TEST) {
 
 TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_Y_TEST) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('Y', 0x01);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xF9);
@@ -2092,7 +2098,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_Y_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -2110,7 +2116,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_Y_TEST) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -2123,6 +2129,7 @@ TEST_F(ProcessorTest, INS_SBC_ABSOLUTE_Y_TEST) {
 
 TEST_F(ProcessorTest, INS_SBC_INDEXED_INDIRECT) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('X', 0x01);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xE1);
@@ -2135,7 +2142,7 @@ TEST_F(ProcessorTest, INS_SBC_INDEXED_INDIRECT) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -2154,7 +2161,7 @@ TEST_F(ProcessorTest, INS_SBC_INDEXED_INDIRECT) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -2167,6 +2174,7 @@ TEST_F(ProcessorTest, INS_SBC_INDEXED_INDIRECT) {
 
 TEST_F(ProcessorTest, INS_SBC_INDIRECT_INDEXED) {
 
+    processor->setProcessorStatus('C', 1);
     processor->setRegisterValue('Y', 0x01);
     processor->setRegisterValue('A', 0x01);
     processor->setMemoryByte(0xFFFC, 0xF1);
@@ -2179,7 +2187,7 @@ TEST_F(ProcessorTest, INS_SBC_INDIRECT_INDEXED) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0xFF);
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
     EXPECT_EQ(processor->getProcessorStatus('V'), 0);
 
     processor->setMemoryByte(0x0025, 0xFF);
@@ -2198,7 +2206,7 @@ TEST_F(ProcessorTest, INS_SBC_INDIRECT_INDEXED) {
     EXPECT_EQ(processor->getRegisterValue('A'), 0x71);
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
-    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
     EXPECT_EQ(processor->getProcessorStatus('V'), 1);
 
     processor->setMemoryByte(0x0026, 0x71);
@@ -2208,3 +2216,342 @@ TEST_F(ProcessorTest, INS_SBC_INDIRECT_INDEXED) {
     value = value | (processor->getMemory()[0x0026] << 8);
     EXPECT_EQ(value, 0x71FF);
 }
+
+TEST_F(ProcessorTest, INS_CMP_IMMEDIATE_TEST) {
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC9);
+    processor->setMemoryByte(0xFFFD, 0x80);
+
+    processor->execute(2);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC9);
+    processor->setMemoryByte(0xFFFD, 0x82);
+
+    processor->execute(2);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC9);
+    processor->setMemoryByte(0xFFFD, 0x85);
+
+    processor->execute(2);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_CMP_ZEROPAGE_TEST) {
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC5);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryByte(0x20, 0x80);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC5);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryByte(0x20, 0x82);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC5);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryByte(0x20, 0x85);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_CMP_ZEROPAGE_X_TEST) {
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD5);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryByte(0x21, 0x80);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD5);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryByte(0x21, 0x82);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD5);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryByte(0x21, 0x85);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_CMP_ABSOLUTE_TEST) {
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xCD);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2000, 0x80);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xCD);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2000, 0x82);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xCD);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2000, 0x85);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_CMP_ABSOLUTE_X_TEST) {
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xDD);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2001, 0x80);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xDD);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2001, 0x82);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xDD);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2001, 0x85);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_CMP_ABSOLUTE_Y_TEST) {
+
+    processor->setRegisterValue('Y', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD9);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2001, 0x80);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('Y', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD9);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2001, 0x82);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('Y', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD9);
+    processor->setMemoryWord(0xFFFD, 0x2000);
+    processor->setMemoryByte(0x2001, 0x85);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_CMP_INDEXED_INDIRECT_TEST) {
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC1);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryWord(0x21, 0x4356);
+    processor->setMemoryByte(0x4356, 0x80);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC1);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryWord(0x21, 0x4356);
+    processor->setMemoryByte(0x4356, 0x82);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('X', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xC1);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryWord(0x21, 0x4356);
+    processor->setMemoryByte(0x4356, 0x85);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_CMP_INDIRECT_INDEXED_TEST) {
+
+    processor->setRegisterValue('Y', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD1);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryWord(0x20, 0x4356);
+    processor->setMemoryByte(0x4357, 0x80);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('Y', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD1);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryWord(0x20, 0x4356);
+    processor->setMemoryByte(0x4357, 0x82);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 1);
+
+    processor->resetCPU();
+
+    processor->setRegisterValue('Y', 0x01);
+    processor->setRegisterValue('A', 0x82);
+    processor->setMemoryByte(0xFFFC, 0xD1);
+    processor->setMemoryByte(0xFFFD, 0x20);
+    processor->setMemoryWord(0x20, 0x4356);
+    processor->setMemoryByte(0x4357, 0x85);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatus('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatus('C'), 0);
+}
+
