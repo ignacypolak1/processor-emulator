@@ -121,6 +121,24 @@ namespace Processor {
         void INS_INY_HANDLE(Dword&, const Dword&);
         void INS_DEY_HANDLE(Dword&, const Dword&);
 
+        void INS_ADC_IMMEDIATE_HANDLE(Dword&, const Dword&);
+        void INS_ADC_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_ADC_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+        void INS_ADC_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_ADC_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_ADC_ABSOLUTE_Y_HANDLE(Dword&, const Dword&);
+        void INS_ADC_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
+        void INS_ADC_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
+
+        void INS_SBC_IMMEDIATE_HANDLE(Dword&, const Dword&);
+        void INS_SBC_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_SBC_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+        void INS_SBC_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_SBC_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_SBC_ABSOLUTE_Y_HANDLE(Dword&, const Dword&);
+        void INS_SBC_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
+        void INS_SBC_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:

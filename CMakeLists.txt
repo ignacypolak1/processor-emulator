@@ -5,13 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include source files to library
-add_library(cpu6502 STATIC
-        lib/cpu6502/src/processor.cpp
-        lib/cpu6502/src/instructions.cpp
+add_library(cpu6510 STATIC
+        lib/cpu6510/src/processor.cpp
+        lib/cpu6510/src/instructions.cpp
 )
 
 # Include library headers to library
-target_include_directories(cpu6502 PUBLIC lib/cpu6502/include)
+target_include_directories(cpu6510 PUBLIC lib/cpu6510/include)
 
 # Include header files
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -20,7 +20,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB SOURCE_FILES src/*.cpp)
 
 add_executable(processor-emulator ${SOURCE_FILES})
-target_link_libraries(processor-emulator cpu6502)
+target_link_libraries(processor-emulator cpu6510)
 
 # Tests
 include(FetchContent)
@@ -39,7 +39,7 @@ add_executable(
 target_link_libraries(
         processor_test
         GTest::gtest_main
-        cpu6502
+        cpu6510
 )
 include(GoogleTest)
 gtest_discover_tests(processor_test)
