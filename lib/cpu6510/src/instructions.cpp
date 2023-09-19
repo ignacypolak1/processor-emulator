@@ -981,6 +981,8 @@ void Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
 
     Byte result = regAValue + (~value) + 1 - carry;
 
+    //TODO: FOR ALL ADC AND SBC ADD: If not in decimal mode, set NZV flags, if in decimal, only C
+
     setRegisterValue('A', result);
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
