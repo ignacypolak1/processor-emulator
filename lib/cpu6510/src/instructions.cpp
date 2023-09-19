@@ -695,8 +695,6 @@ void Processor::Processor::INS_DEY_HANDLE(Dword &cycles, const Dword &requested_
     set_flags_NZ(this, regYValue, cycles, requested_cycles, "INS_DEY");
 }
 
-//////////////////////////////////////
-
 void Processor::Processor::INS_ADC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte value = fetchByte(cycles, requested_cycles, "INS_ADC_IMMEDIATE");
     Byte regAValue = getRegisterValue('A');
@@ -705,9 +703,12 @@ void Processor::Processor::INS_ADC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
 }
 
 void Processor::Processor::INS_ADC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -719,9 +720,12 @@ void Processor::Processor::INS_ADC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
 }
 
 void Processor::Processor::INS_ADC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -738,9 +742,12 @@ void Processor::Processor::INS_ADC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     cycles--;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
 }
 
 void Processor::Processor::INS_ADC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -752,9 +759,12 @@ void Processor::Processor::INS_ADC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
 }
 void Processor::Processor::INS_ADC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word address = fetchWord(cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
@@ -773,9 +783,12 @@ void Processor::Processor::INS_ADC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
 }
 void Processor::Processor::INS_ADC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word address = fetchWord(cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
@@ -794,9 +807,12 @@ void Processor::Processor::INS_ADC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
 }
 void Processor::Processor::INS_ADC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte address = fetchByte(cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
@@ -813,9 +829,12 @@ void Processor::Processor::INS_ADC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     cycles--;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
 }
 
 void Processor::Processor::INS_ADC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -837,9 +856,12 @@ void Processor::Processor::INS_ADC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
+        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
+    }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
 }
 
 void Processor::Processor::INS_SBC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -850,9 +872,13 @@ void Processor::Processor::INS_SBC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &
     Byte result = regAValue + (~value) + 1 - carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
+    }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
+
 }
 
 void Processor::Processor::INS_SBC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -864,9 +890,12 @@ void Processor::Processor::INS_SBC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
     Byte result = regAValue + (~value) + 1 - carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
-    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
+    }
+    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
 }
 
 void Processor::Processor::INS_SBC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -883,9 +912,13 @@ void Processor::Processor::INS_SBC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     cycles--;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
-    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
+    }
+    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
+
 }
 
 void Processor::Processor::INS_SBC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -897,9 +930,13 @@ void Processor::Processor::INS_SBC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
     Byte result = regAValue + (~value) + 1 - carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
-    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
+    }
+    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
+
 }
 void Processor::Processor::INS_SBC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word address = fetchWord(cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
@@ -918,9 +955,13 @@ void Processor::Processor::INS_SBC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
     Byte result = regAValue + (~value) + 1 - carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
-    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
+    }
+    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
+
 }
 void Processor::Processor::INS_SBC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word address = fetchWord(cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
@@ -939,9 +980,12 @@ void Processor::Processor::INS_SBC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
     Byte result = regAValue + (~value) + 1 - carry;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
-    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
+    }
+    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
 }
 void Processor::Processor::INS_SBC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte address = fetchByte(cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
@@ -958,9 +1002,12 @@ void Processor::Processor::INS_SBC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     cycles--;
 
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
-    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
+    }
+    set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
 }
 
 void Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -981,11 +1028,12 @@ void Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
 
     Byte result = regAValue + (~value) + 1 - carry;
 
-    //TODO: FOR ALL ADC AND SBC ADD: If not in decimal mode, set NZV flags, if in decimal, only C
-
     setRegisterValue('A', result);
-    set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
+
+    if(!getProcessorStatus('D')) {
+        set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
+        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
+    }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-    set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
 }
 
