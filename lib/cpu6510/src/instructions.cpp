@@ -735,6 +735,7 @@ void Processor::Processor::INS_ADC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     Byte carry = getProcessorStatus('C');
 
     Byte result = regAValue + value + carry;
+    cycles--;
 
     setRegisterValue('A', result);
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
@@ -809,6 +810,7 @@ void Processor::Processor::INS_ADC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     Byte carry = getProcessorStatus('C');
 
     Byte result = regAValue + value + carry;
+    cycles--;
 
     setRegisterValue('A', result);
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
