@@ -83,7 +83,13 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_CMP_ABSOLUTE_X, &Processor::Processor::INS_CMP_ABSOLUTE_X_HANDLE},
         {INS_CMP_ABSOLUTE_Y, &Processor::Processor::INS_CMP_ABSOLUTE_Y_HANDLE},
         {INS_CMP_INDEXED_INDIRECT, &Processor::Processor::INS_CMP_INDEXED_INDIRECT_HANDLE},
-        {INS_CMP_INDIRECT_INDEXED, &Processor::Processor::INS_CMP_INDIRECT_INDEXED_HANDLE}
+        {INS_CMP_INDIRECT_INDEXED, &Processor::Processor::INS_CMP_INDIRECT_INDEXED_HANDLE},
+        {INS_CPX_IMMEDIATE, &Processor::Processor::INS_CPX_IMMEDIATE_HANDLE},
+        {INS_CPX_ZEROPAGE, &Processor::Processor::INS_CPX_ZEROPAGE_HANDLE},
+        {INS_CPX_ABSOLUTE, &Processor::Processor::INS_CPX_ABSOLUTE_HANDLE},
+        {INS_CPY_IMMEDIATE, &Processor::Processor::INS_CPY_IMMEDIATE_HANDLE},
+        {INS_CPY_ZEROPAGE, &Processor::Processor::INS_CPY_ZEROPAGE_HANDLE},
+        {INS_CPY_ABSOLUTE, &Processor::Processor::INS_CPY_ABSOLUTE_HANDLE}
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
