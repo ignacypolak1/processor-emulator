@@ -148,6 +148,14 @@ namespace Processor {
         void INS_CMP_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
         void INS_CMP_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
 
+        void INS_CPX_IMMEDIATE_HANDLE(Dword&, const Dword&);
+        void INS_CPX_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_CPX_ABSOLUTE_HANDLE(Dword&, const Dword&);
+
+        void INS_CPY_IMMEDIATE_HANDLE(Dword&, const Dword&);
+        void INS_CPY_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_CPY_ABSOLUTE_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
