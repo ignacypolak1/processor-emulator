@@ -2472,7 +2472,7 @@ TEST_F(ProcessorTest, INS_CMP_INDEXED_INDIRECT_TEST) {
     processor->setMemoryWord(0x21, 0x4356);
     processor->setMemoryByte(0x4356, 0x80);
 
-    processor->execute(4);
+    processor->execute(6);
 
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
@@ -2487,7 +2487,7 @@ TEST_F(ProcessorTest, INS_CMP_INDEXED_INDIRECT_TEST) {
     processor->setMemoryWord(0x21, 0x4356);
     processor->setMemoryByte(0x4356, 0x82);
 
-    processor->execute(4);
+    processor->execute(6);
 
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
@@ -2502,7 +2502,7 @@ TEST_F(ProcessorTest, INS_CMP_INDEXED_INDIRECT_TEST) {
     processor->setMemoryWord(0x21, 0x4356);
     processor->setMemoryByte(0x4356, 0x85);
 
-    processor->execute(4);
+    processor->execute(6);
 
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
@@ -2518,7 +2518,7 @@ TEST_F(ProcessorTest, INS_CMP_INDIRECT_INDEXED_TEST) {
     processor->setMemoryWord(0x20, 0x4356);
     processor->setMemoryByte(0x4357, 0x80);
 
-    processor->execute(4);
+    processor->execute(5);
 
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);
@@ -2533,7 +2533,7 @@ TEST_F(ProcessorTest, INS_CMP_INDIRECT_INDEXED_TEST) {
     processor->setMemoryWord(0x20, 0x4356);
     processor->setMemoryByte(0x4357, 0x82);
 
-    processor->execute(4);
+    processor->execute(5);
 
     EXPECT_EQ(processor->getProcessorStatus('N'), 0);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 1);
@@ -2548,7 +2548,7 @@ TEST_F(ProcessorTest, INS_CMP_INDIRECT_INDEXED_TEST) {
     processor->setMemoryWord(0x20, 0x4356);
     processor->setMemoryByte(0x4357, 0x85);
 
-    processor->execute(4);
+    processor->execute(5);
 
     EXPECT_EQ(processor->getProcessorStatus('N'), 1);
     EXPECT_EQ(processor->getProcessorStatus('Z'), 0);

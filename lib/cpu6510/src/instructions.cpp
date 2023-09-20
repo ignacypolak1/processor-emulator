@@ -1101,6 +1101,7 @@ void Processor::Processor::INS_CMP_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     Byte regAValue = getRegisterValue('A');
 
     Byte result = regAValue + (~value) + 1;
+    cycles--;
 
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_ZEROPAGE_X");
     set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_ZEROPAGE_X");
@@ -1165,6 +1166,7 @@ void Processor::Processor::INS_CMP_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     Byte regAValue = getRegisterValue('A');
 
     Byte result = regAValue + (~value) + 1;
+    cycles--;
 
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_INDEXED_INDIRECT");
     set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_INDEXED_INDIRECT");
@@ -1185,6 +1187,7 @@ void Processor::Processor::INS_CMP_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Byte regAValue = getRegisterValue('A');
 
     Byte result = regAValue + (~value) + 1;
+    cycles--;
 
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
     set_flags_C(this, regAValue, value, false, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
