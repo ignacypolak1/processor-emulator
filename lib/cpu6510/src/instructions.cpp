@@ -89,7 +89,11 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_CPX_ABSOLUTE, &Processor::Processor::INS_CPX_ABSOLUTE_HANDLE},
         {INS_CPY_IMMEDIATE, &Processor::Processor::INS_CPY_IMMEDIATE_HANDLE},
         {INS_CPY_ZEROPAGE, &Processor::Processor::INS_CPY_ZEROPAGE_HANDLE},
-        {INS_CPY_ABSOLUTE, &Processor::Processor::INS_CPY_ABSOLUTE_HANDLE}
+        {INS_CPY_ABSOLUTE, &Processor::Processor::INS_CPY_ABSOLUTE_HANDLE},
+        {INS_PHA, &Processor::Processor::INS_PHA_HANDLE},
+        {INS_PLA, &Processor::Processor::INS_PLA_HANDLE},
+        {INS_PHP, &Processor::Processor::INS_PHP_HANDLE},
+        {INS_PLP, &Processor::Processor::INS_PLP_HANDLE}
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -98,30 +102,30 @@ void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Proces
         #ifdef DEBUG
                 printf("Cycle %i: %s: Setting Zero Flag\n", requested_cycles-cycles, opname.c_str());
         #endif
-        processor->setProcessorStatus('Z', 1);
+        processor->setProcessorStatusFlag('Z');
         #ifdef DEBUG
                 printf("Cycle %i: %s: Resetting Negative Flag\n", requested_cycles-cycles, opname.c_str());
         #endif
-        processor->setProcessorStatus('N', 0);
+        processor->resetProcessorStatusFlag('N');
     }
 
     else {
         #ifdef DEBUG
                 printf("Cycle %i: %s: Resetting Zero Flag\n", requested_cycles-cycles, opname.c_str());
         #endif
-        processor->setProcessorStatus('Z', 0);
+        processor->resetProcessorStatusFlag('Z');
 
         if(value & NEGATIVE_MASK) {
             #ifdef DEBUG
                         printf("Cycle %i: %s: Setting Negative Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('N', 1);
+            processor->setProcessorStatusFlag('N');
         }
         else {
             #ifdef DEBUG
                         printf("Cycle %i: %s: Resetting Negative Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('N', 0);
+            processor->resetProcessorStatusFlag('N');
         }
     }
 }
@@ -135,13 +139,13 @@ void set_flags_C(Processor::Processor *processor, Processor::Byte value, Process
             #ifdef DEBUG
                 printf("Cycle %i: %s: Setting Carry Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('C', 1);
+            processor->setProcessorStatusFlag('C');
         }
         else {
             #ifdef DEBUG
                 printf("Cycle %i: %s: Resseting Carry Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('C', 0);
+            processor->resetProcessorStatusFlag('C');
         }
     }
     else {
@@ -149,13 +153,13 @@ void set_flags_C(Processor::Processor *processor, Processor::Byte value, Process
             #ifdef DEBUG
                         printf("Cycle %i: %s: Setting Carry Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('C', 1);
+            processor->setProcessorStatusFlag('C');
         }
         else {
             #ifdef DEBUG
                 printf("Cycle %i: %s: Resseting Carry Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('C', 0);
+            processor->resetProcessorStatusFlag('C');
         }
     }
 }
@@ -171,19 +175,19 @@ void set_flags_V(Processor::Processor *processor, Processor::Byte value, Process
             #ifdef DEBUG
                 printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('V', 1);
+            processor->setProcessorStatusFlag('V');
         }
         else if(!bValuePositive && !bAnotherValuePositive && bResultPositive) {
             #ifdef DEBUG
                 printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('V', 1);
+            processor->setProcessorStatusFlag('V');
         }
         else {
             #ifdef DEBUG
                 printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('V', 0);
+            processor->resetProcessorStatusFlag('V');
         }
     } else {
         bResultPositive = ((value - anotherValue) & 0x80) == 0;
@@ -191,19 +195,19 @@ void set_flags_V(Processor::Processor *processor, Processor::Byte value, Process
             #ifdef DEBUG
                 printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('V', 1);
+            processor->setProcessorStatusFlag('V');
         }
         else if(!bValuePositive && bAnotherValuePositive && bResultPositive) {
             #ifdef DEBUG
                 printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('V', 1);
+            processor->setProcessorStatusFlag('V');
         }
         else {
             #ifdef DEBUG
                 printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
             #endif
-            processor->setProcessorStatus('V', 0);
+            processor->resetProcessorStatusFlag('V');
         }
     }
 }
@@ -303,14 +307,6 @@ void Processor::Processor::INS_LDA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
 
     set_flags_NZ(this, value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
     setRegisterValue('A', value, cycles, requested_cycles, "INS_LDA_INDIRECT_INDEXED");
-}
-
-void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    Word subroutineAddress = fetchWord(cycles, requested_cycles, "INS_JSR");
-
-    writeWord(stack_pointer, program_counter-1, cycles, requested_cycles, "INS_JSR");
-    setProgramCounter(subroutineAddress, cycles, requested_cycles, "INS_JSR");
-    cycles--;
 }
 
 void Processor::Processor::INS_LDX_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -506,7 +502,7 @@ void Processor::Processor::INS_STY_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 }
 
 void Processor::Processor::INS_CLC_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    setProcessorStatus('C', 0);
+    resetProcessorStatusFlag('C');
     #ifdef DEBUG
         printf("Cycle %i: %s: Resetting Carry Flag\n", requested_cycles-cycles, "INS_CLC");
     #endif
@@ -514,7 +510,7 @@ void Processor::Processor::INS_CLC_HANDLE(Dword &cycles, const Dword &requested_
 }
 
 void Processor::Processor::INS_CLD_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    setProcessorStatus('D', 0);
+    resetProcessorStatusFlag('D');
     #ifdef DEBUG
         printf("Cycle %i: %s: Resetting Decimal Flag\n", requested_cycles-cycles, "INS_CLD");
     #endif
@@ -522,7 +518,7 @@ void Processor::Processor::INS_CLD_HANDLE(Dword &cycles, const Dword &requested_
 }
 
 void Processor::Processor::INS_CLI_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    setProcessorStatus('I', 0);
+    resetProcessorStatusFlag('I');
     #ifdef DEBUG
         printf("Cycle %i: %s: Resetting Interrupt Flag\n", requested_cycles-cycles, "INS_CLI");
     #endif
@@ -530,7 +526,7 @@ void Processor::Processor::INS_CLI_HANDLE(Dword &cycles, const Dword &requested_
 }
 
 void Processor::Processor::INS_CLV_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    setProcessorStatus('V', 0);
+    resetProcessorStatusFlag('V');
     #ifdef DEBUG
         printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles-cycles, "INS_CLV");
     #endif
@@ -538,7 +534,7 @@ void Processor::Processor::INS_CLV_HANDLE(Dword &cycles, const Dword &requested_
 }
 
 void Processor::Processor::INS_SEC_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    setProcessorStatus('C', 1);
+    setProcessorStatusFlag('C');
     #ifdef DEBUG
         printf("Cycle %i: %s: Setting Carry Flag\n", requested_cycles-cycles, "INS_SEC");
     #endif
@@ -546,7 +542,7 @@ void Processor::Processor::INS_SEC_HANDLE(Dword &cycles, const Dword &requested_
 }
 
 void Processor::Processor::INS_SED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    setProcessorStatus('D', 1);
+    setProcessorStatusFlag('D');
     #ifdef DEBUG
         printf("Cycle %i: %s: Setting Decimal Flag\n", requested_cycles-cycles, "INS_SED");
     #endif
@@ -554,7 +550,7 @@ void Processor::Processor::INS_SED_HANDLE(Dword &cycles, const Dword &requested_
 }
 
 void Processor::Processor::INS_SEI_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-    setProcessorStatus('I', 1);
+    setProcessorStatusFlag('I');
     #ifdef DEBUG
         printf("Cycle %i: %s: Setting Interrupt Flag\n", requested_cycles-cycles, "INS_SEI");
     #endif
@@ -724,13 +720,13 @@ void Processor::Processor::INS_DEY_HANDLE(Dword &cycles, const Dword &requested_
 void Processor::Processor::INS_ADC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte value = fetchByte(cycles, requested_cycles, "INS_ADC_IMMEDIATE");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
     }
@@ -741,13 +737,13 @@ void Processor::Processor::INS_ADC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
     Byte address = fetchByte(cycles, requested_cycles, "INS_ADC_ZEROPAGE");
     Byte value = readByte(address, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
     }
@@ -762,14 +758,14 @@ void Processor::Processor::INS_ADC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 
     Byte value = readByte(address, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
     cycles--;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
     }
@@ -780,13 +776,13 @@ void Processor::Processor::INS_ADC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
     Word address = fetchWord(cycles, requested_cycles, "INS_ADC_ABSOLUTE");
     Byte value = readByte(address, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
     }
@@ -805,13 +801,13 @@ void Processor::Processor::INS_ADC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
 
     Byte value = readByte(address, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
     }
@@ -830,13 +826,13 @@ void Processor::Processor::INS_ADC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
 
     Byte value = readByte(address, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
     }
@@ -852,14 +848,14 @@ void Processor::Processor::INS_ADC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
 
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
     cycles--;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
     }
@@ -880,13 +876,13 @@ void Processor::Processor::INS_ADC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
 
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + value + carry;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
         set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
     }
@@ -896,13 +892,13 @@ void Processor::Processor::INS_ADC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
 void Processor::Processor::INS_SBC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte value = fetchByte(cycles, requested_cycles, "INS_SBC_IMMEDIATE");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
     }
@@ -913,13 +909,13 @@ void Processor::Processor::INS_SBC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
     Byte address = fetchByte(cycles, requested_cycles, "INS_SBC_ZEROPAGE");
     Byte value = readByte(address, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
     }
@@ -934,14 +930,14 @@ void Processor::Processor::INS_SBC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 
     Byte value = readByte(address, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
     cycles--;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
     }
@@ -953,13 +949,13 @@ void Processor::Processor::INS_SBC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
     Word address = fetchWord(cycles, requested_cycles, "INS_SBC_ABSOLUTE");
     Byte value = readByte(address, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
     }
@@ -979,13 +975,13 @@ void Processor::Processor::INS_SBC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
 
     Byte value = readByte(address, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
     }
@@ -1005,13 +1001,13 @@ void Processor::Processor::INS_SBC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
 
     Byte value = readByte(address, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
     }
@@ -1027,14 +1023,14 @@ void Processor::Processor::INS_SBC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
     Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
 
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
     cycles--;
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
     }
@@ -1055,13 +1051,13 @@ void Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
 
     Byte regAValue = getRegisterValue('A');
-    Byte carry = getProcessorStatus('C');
+    Byte carry = getProcessorStatusFlag('C');
 
     Byte result = regAValue + (~value) + 1 - (1-carry);
 
     setRegisterValue('A', result);
 
-    if(!getProcessorStatus('D')) {
+    if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
         set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
     }
@@ -1257,4 +1253,29 @@ void Processor::Processor::INS_CPY_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
 
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_CPY_ABSOLUTE");
     set_flags_C(this, regYValue, value, false, cycles, requested_cycles, "INS_CPY_ABSOLUTE");
+}
+
+
+void Processor::Processor::INS_PHA_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+
+}
+
+void Processor::Processor::INS_PLA_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+
+}
+
+void Processor::Processor::INS_PHP_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+
+}
+
+void Processor::Processor::INS_PLP_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+
+}
+
+void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word subroutineAddress = fetchWord(cycles, requested_cycles, "INS_JSR");
+
+    writeWord(stack_pointer, program_counter-1, cycles, requested_cycles, "INS_JSR");
+    setProgramCounter(subroutineAddress, cycles, requested_cycles, "INS_JSR");
+    cycles--;
 }

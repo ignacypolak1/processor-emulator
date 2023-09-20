@@ -37,14 +37,48 @@ Processor::Byte Processor::Processor::getRegisterValue(const char& key) const {
 }
 
 /**
-* Get current state of specific bit in processor status register.
+* Get processor status register.
 *
-* @param key Status bit name.
-* @return Current state of specific bit in processor status register (type bool, true for set, false for unset).
+* @return Processor status register.
 * @throws std::out_of_range Thrown if key doesn't exist.
 */
-Processor::Byte Processor::Processor::getProcessorStatus(const char& key) const {
-    return processor_status.at(key);
+Processor::Byte Processor::Processor::getProcessorStatusRegister() const {
+    return processor_status;
+}
+
+/**
+* Get processor status register flag.
+*
+* @return Processor status register flag.
+*/
+Processor::Byte Processor::Processor::getProcessorStatusFlag(const char &flag) const {
+    switch(flag) {
+        case 'C':
+            return (processor_status & 0x01);
+            break;
+        case 'Z':
+            return (processor_status & 0x02) >> 1;
+            break;
+        case 'I':
+            return (processor_status & 0x04) >> 2;
+            break;
+        case 'D':
+            return (processor_status & 0x08) >> 3;
+            break;
+        case 'B':
+            return (processor_status & 0x10) >> 4;
+            break;
+        case 'V':
+            return (processor_status & 0x40) >> 6;
+            break;
+        case 'N':
+            return (processor_status & 0x80) >> 7;
+            break;
+        default:
+            char errorMessage[100];
+            sprintf(errorMessage, "Flag: %c doesn't exists", flag);
+            throw std::runtime_error(errorMessage);
+    }
 }
 
 /**
@@ -88,15 +122,82 @@ void Processor::Processor::setRegisterValue(const char &key, const Byte &value, 
 }
 
 /**
-* Set specific bit in processor status register.
+* Set processor status register.
 *
-* @param key Specific bit name.
-* @param value Value to set for specific bit.
-* @throws std::out_of_range Thrown if key doesn't exist.
+* @param value Value to set in register.
 */
-void Processor::Processor::setProcessorStatus(const char &key, const Byte &value) {
-    processor_status.at(key);
-    processor_status[key] = value;
+void Processor::Processor::setProcessorStatusRegister(const Byte &value) {
+    processor_status = value;
+}
+
+/**
+* Set processor status register specific flag.
+*
+* @param flag Flag to set in status register.
+*/
+void Processor::Processor::setProcessorStatusFlag(const char &flag) {
+    switch(flag) {
+        case 'C':
+            processor_status|=0x01;
+            break;
+        case 'Z':
+            processor_status|=0x02;
+            break;
+        case 'I':
+            processor_status|=0x04;
+            break;
+        case 'D':
+            processor_status|=0x08;
+            break;
+        case 'B':
+            processor_status|=0x10;
+            break;
+        case 'V':
+            processor_status|=0x40;
+            break;
+        case 'N':
+            processor_status|=0x80;
+            break;
+        default:
+            char errorMessage[100];
+            sprintf(errorMessage, "Flag: %c doesn't exists", flag);
+            throw std::runtime_error(errorMessage);
+    }
+}
+
+/**
+* Reset processor status register specific flag.
+*
+* @param flag Flag to reset in status register.
+*/
+void Processor::Processor::resetProcessorStatusFlag(const char &flag) {
+    switch(flag) {
+        case 'C':
+            processor_status&=~0x01;
+            break;
+        case 'Z':
+            processor_status&=~0x02;
+            break;
+        case 'I':
+            processor_status&=~0x04;
+            break;
+        case 'D':
+            processor_status&=~0x08;
+            break;
+        case 'B':
+            processor_status&=~0x10;
+            break;
+        case 'V':
+            processor_status&=~0x40;
+            break;
+        case 'N':
+            processor_status&=~0x80;
+            break;
+        default:
+            char errorMessage[100];
+            sprintf(errorMessage, "Flag: %c doesn't exists", flag);
+            throw std::runtime_error(errorMessage);
+    }
 }
 
 /**
@@ -133,9 +234,7 @@ void Processor::Processor::resetCPU() {
         setRegisterValue(pair.first, 0x00);
     }
 
-    for(const auto& pair : processor_status) { // Reset All Status Register Bits
-        setProcessorStatus(pair.first, 0x00);
-    }
+    setProcessorStatusRegister(0x00);
 }
 
 std::array<Processor::Byte, MAX_MEMORY> Processor::Processor::getMemory() const {

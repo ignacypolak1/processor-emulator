@@ -105,6 +105,15 @@
 #define INS_CPY_ZEROPAGE 0xC4
 #define INS_CPY_ABSOLUTE 0xCC
 
+#define INS_PHA 0x48
+#define INS_PLA 0x68
+#define INS_PHP 0x08
+#define INS_PLP 0x28
+
+#define INS_JMP_ABSOLUTE 0x4C
+#define INS_JMP_INDIRECT 0x6C
 #define INS_JSR 0x20
+#define INS_RTS 0x60
+#define INS_RTI 0x40
 
 #endif

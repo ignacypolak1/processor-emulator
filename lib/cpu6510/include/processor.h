@@ -44,15 +44,16 @@ namespace Processor {
                 {'Y', 1}
         };
 
-        std::map<char, Byte> processor_status = { // Processor Status Register
-                {'C', 1},
-                {'Z', 1},
-                {'I', 1},
-                {'D', 1},
-                {'B', 1},
-                {'V', 1},
-                {'N', 1}
-        };
+//        std::map<char, Byte> processor_status = { // Processor Status Register
+//                {'C', 1},
+//                {'Z', 1},
+//                {'I', 1},
+//                {'D', 1},
+//                {'B', 1},
+//                {'V', 1},
+//                {'N', 1}
+//        };
+        Byte processor_status;
 
         void INS_LDA_IMMEDIATE_HANDLE(Dword&, const Dword&);
         void INS_LDA_ABSOLUTE_HANDLE(Dword&, const Dword&);
@@ -156,6 +157,11 @@ namespace Processor {
         void INS_CPY_ZEROPAGE_HANDLE(Dword&, const Dword&);
         void INS_CPY_ABSOLUTE_HANDLE(Dword&, const Dword&);
 
+        void INS_PHA_HANDLE(Dword&, const Dword&);
+        void INS_PLA_HANDLE(Dword&, const Dword&);
+        void INS_PHP_HANDLE(Dword&, const Dword&);
+        void INS_PLP_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
@@ -165,13 +171,16 @@ namespace Processor {
         Word getProgramCounter() const;
         Word getStackPointer() const;
         Byte getRegisterValue(const char&) const;
-        Byte getProcessorStatus(const char&) const;
+        Byte getProcessorStatusRegister() const;
+        Byte getProcessorStatusFlag(const char&) const;
         std::array<Byte, MAX_MEMORY> getMemory() const;
 
         void setProgramCounter(const Word&, const std::optional<Dword> = std::nullopt, const std::optional<Dword> = std::nullopt, const std::string = "");
         void setStackPointer(const Byte&);
         void setRegisterValue(const char&, const Byte&, const std::optional<Dword> = std::nullopt, const std::optional<Dword> = std::nullopt, const std::string = "");
-        void setProcessorStatus(const char&, const Byte&);
+        void setProcessorStatusRegister(const Byte&);
+        void setProcessorStatusFlag(const char&);
+        void resetProcessorStatusFlag(const char&);
 
         void resetCPU();
         Byte fetchByte(Dword &cycles, const Dword &requested_cycles, std::string = "");
