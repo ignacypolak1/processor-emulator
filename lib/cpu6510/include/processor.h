@@ -36,6 +36,7 @@ namespace Processor {
     private:
         Word program_counter; // Program Counter
         Word stack_pointer; // Stack Pointer
+        Byte processor_status;
         Memory memory;
 
         std::map<char, Byte> registers = { // Registers
@@ -43,17 +44,6 @@ namespace Processor {
                 {'X', 1},
                 {'Y', 1}
         };
-
-//        std::map<char, Byte> processor_status = { // Processor Status Register
-//                {'C', 1},
-//                {'Z', 1},
-//                {'I', 1},
-//                {'D', 1},
-//                {'B', 1},
-//                {'V', 1},
-//                {'N', 1}
-//        };
-        Byte processor_status;
 
         void INS_LDA_IMMEDIATE_HANDLE(Dword&, const Dword&);
         void INS_LDA_ABSOLUTE_HANDLE(Dword&, const Dword&);

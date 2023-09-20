@@ -234,7 +234,7 @@ void Processor::Processor::resetCPU() {
         setRegisterValue(pair.first, 0x00);
     }
 
-    setProcessorStatusRegister(0x00);
+    setProcessorStatusRegister(0x20);
 }
 
 std::array<Processor::Byte, MAX_MEMORY> Processor::Processor::getMemory() const {

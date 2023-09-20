@@ -37,7 +37,7 @@ TEST_F(ProcessorTest, INITIALIZATION_TEST) {
         }
     }
     EXPECT_FALSE(nonZeroRegister);
-    EXPECT_EQ(processor->getProcessorStatusRegister(), 0x00);
+    EXPECT_EQ(processor->getProcessorStatusRegister(), 0x20);
 }
 
 TEST_F(ProcessorTest, INS_LDA_IMMEDIATE_TEST) {
