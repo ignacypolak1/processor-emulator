@@ -152,6 +152,15 @@ namespace Processor {
         void INS_PHP_HANDLE(Dword&, const Dword&);
         void INS_PLP_HANDLE(Dword&, const Dword&);
 
+        void INS_BCC_HANDLE(Dword&, const Dword&);
+        void INS_BCS_HANDLE(Dword&, const Dword&);
+        void INS_BEQ_HANDLE(Dword&, const Dword&);
+        void INS_BMI_HANDLE(Dword&, const Dword&);
+        void INS_BNE_HANDLE(Dword&, const Dword&);
+        void INS_BPL_HANDLE(Dword&, const Dword&);
+        void INS_BVC_HANDLE(Dword&, const Dword&);
+        void INS_BVS_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:

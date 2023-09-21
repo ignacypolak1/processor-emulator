@@ -110,10 +110,15 @@
 #define INS_PHP 0x08
 #define INS_PLP 0x28
 
-#define INS_JMP_ABSOLUTE 0x4C
-#define INS_JMP_INDIRECT 0x6C
+#define INS_BCC 0x90
+#define INS_BCS 0xB0
+#define INS_BEQ 0xF0
+#define INS_BMI 0x30
+#define INS_BNE 0xD0
+#define INS_BPL 0x10
+#define INS_BVC 0x50
+#define INS_BVS 0x70
+
 #define INS_JSR 0x20
-#define INS_RTS 0x60
-#define INS_RTI 0x40
 
 #endif

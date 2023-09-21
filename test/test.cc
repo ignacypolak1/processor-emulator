@@ -2779,8 +2779,6 @@ TEST_F(ProcessorTest, INS_JSR_TEST) {
     EXPECT_EQ(processor->getProgramCounter(), 0x4243);
 }
 
-///////////////////////
-
 TEST_F(ProcessorTest, INS_PHA_TEST) {
     processor->setRegisterValue('A', 0x20);
     processor->setMemoryByte(0xFFFC, 0x48);
@@ -2823,4 +2821,92 @@ TEST_F(ProcessorTest, INS_PLP_TEST) {
 
     EXPECT_EQ(processor->getProcessorStatusRegister(), 0x51);
     EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x01FF);
+}
+
+TEST_F(ProcessorTest, INS_BCC_TEST) {
+    processor->resetProcessorStatusFlag('C');
+
+    processor->setMemoryByte(0xFFFC, 0x90);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
+}
+
+TEST_F(ProcessorTest, INS_BCS_TEST) {
+    processor->setProcessorStatusFlag('C');
+
+    processor->setMemoryByte(0xFFFC, 0xB0);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
+}
+
+TEST_F(ProcessorTest, INS_BEQ_TEST) {
+    processor->setProcessorStatusFlag('Z');
+
+    processor->setMemoryByte(0xFFFC, 0xF0);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
+}
+
+TEST_F(ProcessorTest, INS_BMI_TEST) {
+    processor->setProcessorStatusFlag('N');
+
+    processor->setMemoryByte(0xFFFC, 0x30);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
+}
+
+TEST_F(ProcessorTest, INS_BNE_TEST) {
+    processor->resetProcessorStatusFlag('Z');
+
+    processor->setMemoryByte(0xFFFC, 0xD0);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
+}
+
+TEST_F(ProcessorTest, INS_BPL_TEST) {
+    processor->resetProcessorStatusFlag('N');
+
+    processor->setMemoryByte(0xFFFC, 0x10);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
+}
+
+TEST_F(ProcessorTest, INS_BVC_TEST) {
+    processor->resetProcessorStatusFlag('V');
+
+    processor->setMemoryByte(0xFFFC, 0x10);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
+}
+
+TEST_F(ProcessorTest, INS_BVS_TEST) {
+    processor->setProcessorStatusFlag('V');
+
+    processor->setMemoryByte(0xFFFC, 0x10);
+    processor->setMemoryByte(0xFFFD, 0xFF);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
 }

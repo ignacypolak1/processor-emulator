@@ -93,7 +93,15 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_PHA, &Processor::Processor::INS_PHA_HANDLE},
         {INS_PLA, &Processor::Processor::INS_PLA_HANDLE},
         {INS_PHP, &Processor::Processor::INS_PHP_HANDLE},
-        {INS_PLP, &Processor::Processor::INS_PLP_HANDLE}
+        {INS_PLP, &Processor::Processor::INS_PLP_HANDLE},
+        {INS_BCC, &Processor::Processor::INS_BCC_HANDLE},
+        {INS_BCS, &Processor::Processor::INS_BCS_HANDLE},
+        {INS_BEQ, &Processor::Processor::INS_BEQ_HANDLE},
+        {INS_BMI, &Processor::Processor::INS_BMI_HANDLE},
+        {INS_BNE, &Processor::Processor::INS_BNE_HANDLE},
+        {INS_BPL, &Processor::Processor::INS_BPL_HANDLE},
+        {INS_BVC, &Processor::Processor::INS_BVC_HANDLE},
+        {INS_BVS, &Processor::Processor::INS_BVS_HANDLE}
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -1278,6 +1286,143 @@ void Processor::Processor::INS_PLP_HANDLE(Dword &cycles, const Dword &requested_
     Byte value = pullByteFromStack(cycles, requested_cycles, "INS_PLP");
     setProcessorStatusRegister(value);
     cycles-=2;
+}
+
+void Processor::Processor::INS_BCC_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte C = getProcessorStatusFlag('C');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BCC");
+    Word pc = getProgramCounter();
+
+    if(!C) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BCC");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
+}
+void Processor::Processor::INS_BCS_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte C = getProcessorStatusFlag('C');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BCS");
+    Word pc = getProgramCounter();
+
+    if(C) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BCS");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
+}
+void Processor::Processor::INS_BEQ_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte Z = getProcessorStatusFlag('Z');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BEQ");
+    Word pc = getProgramCounter();
+
+    if(Z) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BEQ");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
+}
+void Processor::Processor::INS_BMI_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte N = getProcessorStatusFlag('N');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BMI");
+    Word pc = getProgramCounter();
+
+    if(N) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BMI");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
+}
+void Processor::Processor::INS_BNE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte Z = getProcessorStatusFlag('Z');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BNE");
+    Word pc = getProgramCounter();
+
+    if(!Z) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BNE");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
+}
+void Processor::Processor::INS_BPL_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte N = getProcessorStatusFlag('N');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BPL");
+    Word pc = getProgramCounter();
+
+    if(!N) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BPL");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
+}
+void Processor::Processor::INS_BVC_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte V = getProcessorStatusFlag('V');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BVC");
+    Word pc = getProgramCounter();
+
+    if(!V) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BVC");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
+}
+void Processor::Processor::INS_BVS_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte V = getProcessorStatusFlag('V');
+    int8_t value = fetchByte(cycles, requested_cycles, "INS_BVS");
+    Word pc = getProgramCounter();
+
+    if(V) {
+        if(bAddressesOnDifferentPages(pc, pc+value)) {
+            cycles--;
+        }
+        pc = (pc + value) % 65536;
+        setProgramCounter(pc, cycles, requested_cycles, "INS_BVS");
+        cycles--;
+    }
+    else {
+        cycles--;
+    }
 }
 
 void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
