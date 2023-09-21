@@ -19,10 +19,19 @@ Processor::Word Processor::Processor::getProgramCounter() const {
 /**
 * Get current stack register value.
 *
-* @return Current stack register value (type Processor::Word/uint8_t).
+* @return Current stack register value (type Processor::Byte/uint8_t).
 */
-Processor::Word Processor::Processor::getStackPointer() const {
+Processor::Byte Processor::Processor::getStackPointer() const {
     return stack_pointer;
+}
+
+/**
+* Get current memory address pointed by stack register value.
+*
+* @return Current address pointed by stack register value. (type Processor::Word/uint16_t).
+*/
+Processor::Word Processor::Processor::getStackPointerMemoryAddress() const {
+    return 0x0100 + stack_pointer;
 }
 
 /**
@@ -101,7 +110,7 @@ void Processor::Processor::setProgramCounter(const Word& address, const std::opt
 * @param values Value to set in stack register.
 */
 void Processor::Processor::setStackPointer(const Byte &value) {
-    stack_pointer = 0x0100 | value;
+    stack_pointer = value;
 }
 
 /**
@@ -227,7 +236,7 @@ void Processor::Memory::initialize() {
 void Processor::Processor::resetCPU() {
 
     setProgramCounter(0xFFFC); // Reset Vector Address
-    setStackPointer(0x00); // First Stack Access Address
+    setStackPointer(0xFF); // First Stack Access Address
     memory.initialize(); // Initialize Memory
 
     for(const auto& pair : registers) { // Reset All General Purpose Registers
@@ -323,7 +332,7 @@ void Processor::Processor::writeWord(const Word &address, Word value, Dword &cyc
 void Processor::Processor::writeByte(const Word &address, Byte value, Dword &cycles, const Dword &requested_cycles, std::string opname) {
     memory[address] = value;
     #ifdef DEBUG
-        printf("Cycle %i: Write Byte: Byte 0x%04X written under addresses 0x%04X\n", requested_cycles-cycles, value, address);
+        printf("Cycle %i: Write Byte: Byte 0x%04X written under address 0x%04X\n", requested_cycles-cycles, value, address);
     #endif
     cycles-=1;
 }
@@ -413,5 +422,74 @@ void Processor::Processor::setMemoryWord(const Word &address, const Word value) 
     memory[address + 1] = (value >> 8);
 }
 
+/**
+* Push byte to stack
+*/
+void Processor::Processor::pushByteToStack(Byte value, Dword &cycles, const Dword &requested_cycles, std::string opname) {
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Current stack pointer pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+    #endif
+    setStackPointer(getStackPointer()-1);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Stack pointer decremented by 1. Now pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+        printf("Cycle %i: %s: Pushing byte 0x%04X to stack under address 0x%04X\n", requested_cycles-cycles, opname.c_str(), value, getStackPointerMemoryAddress());
+    #endif
+    Word address = getStackPointerMemoryAddress();
+    writeByte(address, value, cycles, requested_cycles, opname);
+}
+
+/**
+* Pull byte from stack
+*/
+Processor::Byte Processor::Processor::pullByteFromStack(Dword &cycles, const Dword &requested_cycles, std::string opname) {
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Current stack pointer pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+    #endif
+    Word address = getStackPointerMemoryAddress();
+    Byte value = readByte(address, cycles, requested_cycles, opname);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Byte pulled from memory address 0x%04X pointed by stack pointer: 0x%04X\n", requested_cycles-cycles, opname.c_str(), address, value);
+    #endif
+    setStackPointer(getStackPointer()+1);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Stack pointer incremented by 1. Now pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+    #endif
+    return value;
+}
+
+/**
+* Push word to stack
+*/
+void Processor::Processor::pushWordToStack(Word value, Dword &cycles, const Dword &requested_cycles, std::string opname) {
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Current stack pointer pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+    #endif
+    setStackPointer(getStackPointer()-2);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Stack pointer decremented by 2. Now pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+        printf("Cycle %i: %s: Pushing word 0x%04X to stack under addresses 0x%04X and 0x%04X\n", requested_cycles-cycles, opname.c_str(), value, getStackPointerMemoryAddress(), getStackPointerMemoryAddress()+1);
+    #endif
+    Word address = getStackPointerMemoryAddress();
+    writeWord(address, value, cycles, requested_cycles, opname);
+}
+
+/**
+* Pull word from stack
+*/
+Processor::Word Processor::Processor::pullWordFromStack(Dword &cycles, const Dword &requested_cycles, std::string opname) {
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Current stack pointer pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+    #endif
+    Word address = getStackPointerMemoryAddress();
+    Word value = readWord(address, cycles, requested_cycles, opname);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Word pulled from memory address 0x%04X (and 0x%04X) pointed by stack pointer: 0x%04X\n", requested_cycles-cycles, opname.c_str(), address, address+1, value);
+    #endif
+    setStackPointer(getStackPointer()+2);
+    #ifdef DEBUG
+        printf("Cycle %i: %s: Stack pointer incremented by 2. Now pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
+    #endif
+    return value;
+}
 
 

@@ -17,7 +17,7 @@ protected:
 
 TEST_F(ProcessorTest, INITIALIZATION_TEST) {
     EXPECT_EQ(processor->getProgramCounter(), 0xFFFC) << "Program Counter initialized successfully";
-    EXPECT_EQ(processor->getStackPointer(), 0x0100) << "Stack Pointer initialized successfully";
+    EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x01FF) << "Stack Pointer initialized successfully";
 
     bool nonZeroMemory = false;
     for(const auto& value: processor->getMemory()) {
@@ -1097,7 +1097,7 @@ TEST_F(ProcessorTest, INS_TXS_TEST) {
     processor->setMemoryByte(0xFFFC, 0x9A);
 
     processor->execute(2);
-    EXPECT_EQ(processor->getStackPointer(), 0x0124);
+    EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x0124);
 }
 
 TEST_F(ProcessorTest, INS_INC_ZEROPAGE_TEST) {
@@ -2777,4 +2777,50 @@ TEST_F(ProcessorTest, INS_JSR_TEST) {
     processor->execute(6);
 
     EXPECT_EQ(processor->getProgramCounter(), 0x4243);
+}
+
+///////////////////////
+
+TEST_F(ProcessorTest, INS_PHA_TEST) {
+    processor->setRegisterValue('A', 0x20);
+    processor->setMemoryByte(0xFFFC, 0x48);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getMemory()[processor->getStackPointerMemoryAddress()], 0x20);
+    EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x01FE);
+}
+
+TEST_F(ProcessorTest, INS_PLA_TEST) {
+    processor->setMemoryByte(0x01FE, 0x20);
+    processor->setStackPointer(0xFE);
+
+    processor->setMemoryByte(0xFFFC, 0x68);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x20);
+    EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x01FF);
+}
+
+TEST_F(ProcessorTest, INS_PHP_TEST) {
+    processor->setProcessorStatusRegister(0x51);
+    processor->setMemoryByte(0xFFFC, 0x08);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getMemory()[processor->getStackPointerMemoryAddress()], 0x51);
+    EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x01FE);
+}
+
+TEST_F(ProcessorTest, INS_PLP_TEST) {
+    processor->setMemoryByte(0x01FE, 0x51);
+    processor->setStackPointer(0xFE);
+
+    processor->setMemoryByte(0xFFFC, 0x28);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatusRegister(), 0x51);
+    EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x01FF);
 }

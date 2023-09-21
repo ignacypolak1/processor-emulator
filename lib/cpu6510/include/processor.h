@@ -35,7 +35,7 @@ namespace Processor {
 
     private:
         Word program_counter; // Program Counter
-        Word stack_pointer; // Stack Pointer
+        Byte stack_pointer; // Stack Pointer
         Byte processor_status;
         Memory memory;
 
@@ -159,7 +159,8 @@ namespace Processor {
         ~Processor();
 
         Word getProgramCounter() const;
-        Word getStackPointer() const;
+        Byte getStackPointer() const;
+        Word getStackPointerMemoryAddress() const;
         Byte getRegisterValue(const char&) const;
         Byte getProcessorStatusRegister() const;
         Byte getProcessorStatusFlag(const char&) const;
@@ -178,9 +179,15 @@ namespace Processor {
 
         Byte readByte(const Word&, Dword&, const Dword&, std::string = "");
         Word readWord(const Word&, Dword&, const Dword&, std::string = "");
+        Byte pullByteFromStack(Dword&, const Dword&, std::string = "");
+        Word pullWordFromStack(Dword&, const Dword&, std::string = "");
 
         void writeWord(const Word&, Word, Dword&, const Dword&, std::string = "");
         void writeByte(const Word&, Byte, Dword&, const Dword&, std::string = "");
+        void pushByteToStack(Byte, Dword&, const Dword&, std::string = "");
+        void pushWordToStack(Word, Dword&, const Dword&, std::string = "");
+
+
 
         void setMemoryByte(const Word&, const Byte);
         void setMemoryWord(const Word&, const Word);

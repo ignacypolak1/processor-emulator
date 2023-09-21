@@ -1257,25 +1257,32 @@ void Processor::Processor::INS_CPY_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
 
 
 void Processor::Processor::INS_PHA_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-
+    Byte regAvalue = getRegisterValue('A');
+    pushByteToStack(regAvalue, cycles, requested_cycles, "INS_PHA");
+    cycles--;
 }
 
 void Processor::Processor::INS_PLA_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-
+    Byte value = pullByteFromStack(cycles, requested_cycles, "INS_PLA");
+    setRegisterValue('A', value);
+    cycles-=2;
 }
 
 void Processor::Processor::INS_PHP_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-
+    Byte regStatusValue = getProcessorStatusRegister();
+    pushByteToStack(regStatusValue, cycles, requested_cycles, "INS_PHP");
+    cycles--;
 }
 
 void Processor::Processor::INS_PLP_HANDLE(Dword &cycles, const Dword &requested_cycles) {
-
+    Byte value = pullByteFromStack(cycles, requested_cycles, "INS_PLP");
+    setProcessorStatusRegister(value);
+    cycles-=2;
 }
 
 void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word subroutineAddress = fetchWord(cycles, requested_cycles, "INS_JSR");
-
-    writeWord(stack_pointer, program_counter-1, cycles, requested_cycles, "INS_JSR");
+    pushWordToStack(getProgramCounter()-1, cycles, requested_cycles, "INS_JSR");
     setProgramCounter(subroutineAddress, cycles, requested_cycles, "INS_JSR");
     cycles--;
 }
