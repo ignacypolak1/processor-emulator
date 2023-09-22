@@ -2910,3 +2910,29 @@ TEST_F(ProcessorTest, INS_BVS_TEST) {
 
     EXPECT_EQ(processor->getProgramCounter(), 0xFFFD);
 }
+
+TEST_F(ProcessorTest, INS_BIT_ZEROPAGE_TEST) {
+    processor->setRegisterValue('A', 0x85);
+    processor->setMemoryByte(0xFFFC, 0x24);
+    processor->setMemoryByte(0xFFFD, 0x38);
+    processor->setMemoryByte(0x38, 0xFC);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProcessorStatusFlag('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatusFlag('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('V'), 0);
+}
+
+TEST_F(ProcessorTest, INS_BIT_ABSOLUTE_TEST) {
+    processor->setRegisterValue('A', 0xF6);
+    processor->setMemoryByte(0xFFFC, 0x2C);
+    processor->setMemoryWord(0xFFFD, 0x3845);
+    processor->setMemoryByte(0x3845, 0xFC);
+
+    processor->execute(4);
+
+    EXPECT_EQ(processor->getProcessorStatusFlag('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatusFlag('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('V'), 1);
+}

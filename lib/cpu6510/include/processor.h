@@ -161,6 +161,9 @@ namespace Processor {
         void INS_BVC_HANDLE(Dword&, const Dword&);
         void INS_BVS_HANDLE(Dword&, const Dword&);
 
+        void INS_BIT_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_BIT_ABSOLUTE_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:

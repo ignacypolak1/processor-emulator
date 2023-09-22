@@ -101,7 +101,9 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_BNE, &Processor::Processor::INS_BNE_HANDLE},
         {INS_BPL, &Processor::Processor::INS_BPL_HANDLE},
         {INS_BVC, &Processor::Processor::INS_BVC_HANDLE},
-        {INS_BVS, &Processor::Processor::INS_BVS_HANDLE}
+        {INS_BVS, &Processor::Processor::INS_BVS_HANDLE},
+        {INS_BIT_ZEROPAGE, &Processor::Processor::INS_BIT_ZEROPAGE_HANDLE},
+        {INS_BIT_ABSOLUTE, &Processor::Processor::INS_BIT_ABSOLUTE_HANDLE},
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -172,53 +174,74 @@ void set_flags_C(Processor::Processor *processor, Processor::Byte value, Process
     }
 }
 
-void set_flags_V(Processor::Processor *processor, Processor::Byte value, Processor::Byte anotherValue, bool bAddition, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
+void set_flags_V(Processor::Processor *processor, Processor::Byte value, Processor::Byte anotherValue, Processor::Byte mode, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
     bool bValuePositive = (value & 0x80) == 0;
     bool bAnotherValuePositive = (anotherValue & 0x80) == 0;
     bool bResultPositive;
 
-    if(bAddition) {
-        bResultPositive = ((value + anotherValue) & 0x80) == 0;
-        if(bValuePositive && bAnotherValuePositive && !bResultPositive) {
-            #ifdef DEBUG
-                printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
-            #endif
-            processor->setProcessorStatusFlag('V');
+    switch (mode) {
+        case 0x00: {
+            bResultPositive = ((value + anotherValue) & 0x80) == 0;
+            if (bValuePositive && bAnotherValuePositive && !bResultPositive) {
+                #ifdef DEBUG
+                    printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                #endif
+                processor->setProcessorStatusFlag('V');
+            } else if (!bValuePositive && !bAnotherValuePositive && bResultPositive) {
+                #ifdef DEBUG
+                    printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                #endif
+                processor->setProcessorStatusFlag('V');
+            } else {
+                #ifdef DEBUG
+                    printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                #endif
+                processor->resetProcessorStatusFlag('V');
+            }
+            break;
         }
-        else if(!bValuePositive && !bAnotherValuePositive && bResultPositive) {
-            #ifdef DEBUG
-                printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
-            #endif
-            processor->setProcessorStatusFlag('V');
+        case 0x01: {
+            {
+                bResultPositive = ((value - anotherValue) & 0x80) == 0;
+                if (bValuePositive && !bAnotherValuePositive && !bResultPositive) {
+                    #ifdef DEBUG
+                        printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                    #endif
+                    processor->setProcessorStatusFlag('V');
+                } else if (!bValuePositive && bAnotherValuePositive && bResultPositive) {
+                    #ifdef DEBUG
+                        printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                    #endif
+                    processor->setProcessorStatusFlag('V');
+                } else {
+                    #ifdef DEBUG
+                        printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                    #endif
+                    processor->resetProcessorStatusFlag('V');
+                }
+                break;
+            }
         }
-        else {
-            #ifdef DEBUG
-                printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
-            #endif
-            processor->resetProcessorStatusFlag('V');
-        }
-    } else {
-        bResultPositive = ((value - anotherValue) & 0x80) == 0;
-        if(bValuePositive && !bAnotherValuePositive && !bResultPositive) {
-            #ifdef DEBUG
-                printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
-            #endif
-            processor->setProcessorStatusFlag('V');
-        }
-        else if(!bValuePositive && bAnotherValuePositive && bResultPositive) {
-            #ifdef DEBUG
-                printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
-            #endif
-            processor->setProcessorStatusFlag('V');
-        }
-        else {
-            #ifdef DEBUG
-                printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles-cycles, opname.c_str());
-            #endif
-            processor->resetProcessorStatusFlag('V');
+        case 0x02: {
+            {
+                if(value & 0x40) {
+                    #ifdef DEBUG
+                        printf("Cycle %i: %s: Setting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                    #endif
+                    processor->setProcessorStatusFlag('V');
+                }
+                else {
+                    #ifdef DEBUG
+                        printf("Cycle %i: %s: Resetting Overflow Flag\n", requested_cycles - cycles, opname.c_str());
+                    #endif
+                    processor->resetProcessorStatusFlag('V');
+                }
+                break;
+            }
         }
     }
 }
+
 
 
 bool bAddressesOnDifferentPages(Processor::Word address_1, Processor::Word address_2) {
@@ -736,7 +759,7 @@ void Processor::Processor::INS_ADC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_IMMEDIATE");
 }
@@ -753,7 +776,7 @@ void Processor::Processor::INS_ADC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE");
 }
@@ -775,7 +798,7 @@ void Processor::Processor::INS_ADC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ZEROPAGE_X");
 }
@@ -792,7 +815,7 @@ void Processor::Processor::INS_ADC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE");
 }
@@ -817,7 +840,7 @@ void Processor::Processor::INS_ADC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_X");
 }
@@ -842,7 +865,7 @@ void Processor::Processor::INS_ADC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_ABSOLUTE_Y");
 }
@@ -865,7 +888,7 @@ void Processor::Processor::INS_ADC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDEXED_INDIRECT");
 }
@@ -892,7 +915,7 @@ void Processor::Processor::INS_ADC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
-        set_flags_V(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
+        set_flags_V(this, regAValue + carry, value, 0x00, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
     }
     set_flags_C(this, regAValue + carry, value, true, cycles, requested_cycles, "INS_ADC_INDIRECT_INDEXED");
 }
@@ -908,7 +931,7 @@ void Processor::Processor::INS_SBC_IMMEDIATE_HANDLE(Dword &cycles, const Dword &
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_IMMEDIATE");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
 }
@@ -925,7 +948,7 @@ void Processor::Processor::INS_SBC_ZEROPAGE_HANDLE(Dword &cycles, const Dword &r
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE");
 }
@@ -947,7 +970,7 @@ void Processor::Processor::INS_SBC_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ZEROPAGE_X");
 
@@ -965,7 +988,7 @@ void Processor::Processor::INS_SBC_ABSOLUTE_HANDLE(Dword &cycles, const Dword &r
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE");
 
@@ -991,7 +1014,7 @@ void Processor::Processor::INS_SBC_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_X");
 
@@ -1017,7 +1040,7 @@ void Processor::Processor::INS_SBC_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_ABSOLUTE_Y");
 }
@@ -1040,7 +1063,7 @@ void Processor::Processor::INS_SBC_INDEXED_INDIRECT_HANDLE(Dword &cycles, const 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDEXED_INDIRECT");
 }
@@ -1067,7 +1090,7 @@ void Processor::Processor::INS_SBC_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
 
     if(!getProcessorStatusFlag('D')) {
         set_flags_NZ(this, result, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
-        set_flags_V(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
+        set_flags_V(this, regAValue - carry, value, 0x01, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
     }
     set_flags_C(this, regAValue - carry, value, false, cycles, requested_cycles, "INS_SBC_INDIRECT_INDEXED");
 }
@@ -1423,6 +1446,25 @@ void Processor::Processor::INS_BVS_HANDLE(Dword &cycles, const Dword &requested_
     else {
         cycles--;
     }
+}
+
+void Processor::Processor::INS_BIT_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_BIT_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_BIT_ZEROPAGE");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue & value;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_BIT_ZEROPAGE");
+    set_flags_V(this, result, 0, 0x02, cycles, requested_cycles, "INS_BIT_ZEROPAGE");
+}
+void Processor::Processor::INS_BIT_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_BIT_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_BIT_ABSOLUTE");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue & value;
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_BIT_ABSOLUTE");
+    set_flags_V(this, result, 0, 0x02, cycles, requested_cycles, "INS_BIT_ABSOLUTE");
 }
 
 void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
