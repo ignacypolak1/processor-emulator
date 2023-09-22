@@ -113,7 +113,15 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_AND_ABSOLUTE_X, &Processor::Processor::INS_AND_ABSOLUTE_X_HANDLE},
         {INS_AND_ABSOLUTE_Y, &Processor::Processor::INS_AND_ABSOLUTE_Y_HANDLE},
         {INS_AND_INDEXED_INDIRECT, &Processor::Processor::INS_AND_INDEXED_INDIRECT_HANDLE},
-        {INS_AND_INDIRECT_INDEXED, &Processor::Processor::INS_AND_INDIRECT_INDEXED_HANDLE}
+        {INS_AND_INDIRECT_INDEXED, &Processor::Processor::INS_AND_INDIRECT_INDEXED_HANDLE},
+        {INS_ORA_IMMEDIATE, &Processor::Processor::INS_ORA_IMMEDIATE_HANDLE},
+        {INS_ORA_ZEROPAGE, &Processor::Processor::INS_ORA_ZEROPAGE_HANDLE},
+        {INS_ORA_ZEROPAGE_X, &Processor::Processor::INS_ORA_ZEROPAGE_X_HANDLE},
+        {INS_ORA_ABSOLUTE, &Processor::Processor::INS_ORA_ABSOLUTE_HANDLE},
+        {INS_ORA_ABSOLUTE_X, &Processor::Processor::INS_ORA_ABSOLUTE_X_HANDLE},
+        {INS_ORA_ABSOLUTE_Y, &Processor::Processor::INS_ORA_ABSOLUTE_Y_HANDLE},
+        {INS_ORA_INDEXED_INDIRECT, &Processor::Processor::INS_ORA_INDEXED_INDIRECT_HANDLE},
+        {INS_ORA_INDIRECT_INDEXED, &Processor::Processor::INS_ORA_INDIRECT_INDEXED_HANDLE}
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -1604,6 +1612,118 @@ void Processor::Processor::INS_AND_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     setRegisterValue('A', result);
 
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_AND_INDEXED_INDIRECT");
+}
+
+void Processor::Processor::INS_ORA_IMMEDIATE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte value = fetchByte(cycles, requested_cycles, "INS_ORA_IMMEDIATE");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_IMMEDIATE");
+}
+void Processor::Processor::INS_ORA_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_ORA_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ORA_ZEROPAGE");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_ZEROPAGE");
+}
+
+void Processor::Processor::INS_ORA_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_ORA_ZEROPAGE_X");
+
+    Byte regXValue = getRegisterValue('X');
+    address = (address + regXValue) % 256;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ORA_ZEROPAGE_X");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    cycles--;
+
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_ZEROPAGE_X");
+}
+
+void Processor::Processor::INS_ORA_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_ORA_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ORA_ABSOLUTE");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_ABSOLUTE");
+}
+
+void Processor::Processor::INS_ORA_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_ORA_ABSOLUTE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    if(bAddressesOnDifferentPages(address, (address+regXValue) % 65536)) {
+        cycles--;
+    }
+    address = (address + regXValue) % 65536;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ORA_ABSOLUTE_X");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_ABSOLUTE_X");
+}
+
+void Processor::Processor::INS_ORA_ABSOLUTE_Y_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_ORA_ABSOLUTE_Y");
+    Byte regYValue = getRegisterValue('Y');
+
+    if(bAddressesOnDifferentPages(address, (address+regYValue) % 65536)) {
+        cycles--;
+    }
+    address = (address + regYValue) % 65536;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ORA_ABSOLUTE_Y");
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_ABSOLUTE_Y");
+}
+
+void Processor::Processor::INS_ORA_INDEXED_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_ORA_INDEXED_INDIRECT");
+
+    Byte regXValue = getRegisterValue('X');
+    address = (address + regXValue) % 256;
+
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_ORA_INDEXED_INDIRECT");
+    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_ORA_INDEXED_INDIRECT");
+
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    cycles--;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_INDEXED_INDIRECT");
+}
+
+void Processor::Processor::INS_ORA_INDIRECT_INDEXED_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_ORA_INDIRECT_INDEXED");
+
+    Word valueAddress = readWord(address, cycles, requested_cycles, "INS_ORA_INDIRECT_INDEXED");
+
+    Byte regYValue = getRegisterValue('Y');
+    valueAddress = (valueAddress + regYValue) % 65536;
+
+    Byte value = readByte(valueAddress, cycles, requested_cycles, "INS_ORA_INDIRECT_INDEXED");
+
+    Byte regAValue = getRegisterValue('A');
+    Byte result = regAValue | value;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ORA_INDIRECT_INDEXED");
 }
 
 void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {

@@ -174,6 +174,15 @@ namespace Processor {
         void INS_AND_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
         void INS_AND_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
 
+        void INS_ORA_IMMEDIATE_HANDLE(Dword&, const Dword&);
+        void INS_ORA_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_ORA_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+        void INS_ORA_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_ORA_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_ORA_ABSOLUTE_Y_HANDLE(Dword&, const Dword&);
+        void INS_ORA_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
+        void INS_ORA_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
@@ -208,8 +217,6 @@ namespace Processor {
         void writeByte(const Word&, Byte, Dword&, const Dword&, std::string = "");
         void pushByteToStack(Byte, Dword&, const Dword&, std::string = "");
         void pushWordToStack(Word, Dword&, const Dword&, std::string = "");
-
-
 
         void setMemoryByte(const Word&, const Byte);
         void setMemoryWord(const Word&, const Word);
