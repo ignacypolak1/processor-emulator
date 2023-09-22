@@ -164,6 +164,16 @@ namespace Processor {
         void INS_BIT_ZEROPAGE_HANDLE(Dword&, const Dword&);
         void INS_BIT_ABSOLUTE_HANDLE(Dword&, const Dword&);
 
+        void INS_ANC_IMMEDIATE_ILLEGAL_HANDLE(Dword&, const Dword&);
+        void INS_AND_IMMEDIATE_HANDLE(Dword&, const Dword&);
+        void INS_AND_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_AND_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+        void INS_AND_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_AND_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_AND_ABSOLUTE_Y_HANDLE(Dword&, const Dword&);
+        void INS_AND_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
+        void INS_AND_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
