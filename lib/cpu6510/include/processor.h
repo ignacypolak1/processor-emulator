@@ -192,6 +192,18 @@ namespace Processor {
         void INS_EOR_INDEXED_INDIRECT_HANDLE(Dword&, const Dword&);
         void INS_EOR_INDIRECT_INDEXED_HANDLE(Dword&, const Dword&);
 
+        void INS_ROL_ACCUMULATOR_HANDLE(Dword&, const Dword&);
+        void INS_ROL_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_ROL_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_ROL_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_ROL_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+
+        void INS_ROR_ACCUMULATOR_HANDLE(Dword&, const Dword&);
+        void INS_ROR_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_ROR_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_ROR_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_ROR_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+
         void INS_JSR_HANDLE(Dword&, const Dword&);
 
     public:
