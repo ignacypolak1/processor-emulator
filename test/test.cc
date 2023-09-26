@@ -3363,6 +3363,73 @@ TEST_F(ProcessorTest, INS_ROL_ZEROPAGE_X_TEST) {
     EXPECT_EQ(processor->getProcessorStatusFlag('C'), 0);
 }
 
+TEST_F(ProcessorTest, INS_ASL_ACCUMULATOR_TEST) {
+    processor->setRegisterValue('A', 0x22);
+    processor->setMemoryByte(0xFFFC, 0x0A);
+
+    processor->execute(2);
+
+    EXPECT_EQ(processor->getRegisterValue('A'), 0x44);
+    EXPECT_EQ(processor->getProcessorStatusFlag('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('C'), 0);
+}
+
+TEST_F(ProcessorTest, INS_ASL_ABSOLUTE_TEST) {
+    processor->setMemoryByte(0xFFFC, 0x0E);
+    processor->setMemoryWord(0xFFFD, 0x4253);
+    processor->setMemoryByte(0x4253, 0x85);
+
+    processor->execute(6);
+
+    EXPECT_EQ(processor->getMemory()[0x4253], 0x0A);
+    EXPECT_EQ(processor->getProcessorStatusFlag('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('C'), 1);
+}
+
+TEST_F(ProcessorTest, INS_ASL_ABSOLUTE_X_TEST) {
+    processor->setRegisterValue('X', 0x01);
+    processor->setMemoryByte(0xFFFC, 0x1E);
+    processor->setMemoryWord(0xFFFD, 0x4252);
+    processor->setMemoryByte(0x4253, 0xFF);
+
+    processor->execute(7);
+
+    EXPECT_EQ(processor->getMemory()[0x4253], 0xFE);
+    EXPECT_EQ(processor->getProcessorStatusFlag('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatusFlag('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('C'), 1);
+}
+
+TEST_F(ProcessorTest, INS_ASL_ZEROPAGE_TEST) {
+    processor->setMemoryByte(0xFFFC, 0x26);
+    processor->setMemoryWord(0xFFFD, 0x23);
+    processor->setMemoryByte(0x23, 0xFF);
+
+    processor->execute(5);
+
+    EXPECT_EQ(processor->getMemory()[0x23], 0xFE);
+    EXPECT_EQ(processor->getProcessorStatusFlag('N'), 1);
+    EXPECT_EQ(processor->getProcessorStatusFlag('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('C'), 1);
+}
+
+TEST_F(ProcessorTest, INS_ASL_ZEROPAGE_X_TEST) {
+    processor->setRegisterValue('X', 0x01);
+
+    processor->setMemoryByte(0xFFFC, 0x16);
+    processor->setMemoryWord(0xFFFD, 0x22);
+    processor->setMemoryByte(0x23, 0x21);
+
+    processor->execute(6);
+
+    EXPECT_EQ(processor->getMemory()[0x23], 0x42);
+    EXPECT_EQ(processor->getProcessorStatusFlag('N'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('Z'), 0);
+    EXPECT_EQ(processor->getProcessorStatusFlag('C'), 0);
+}
+
 TEST_F(ProcessorTest, INS_ROR_ACCUMULATOR_TEST) {
     processor->setRegisterValue('A', 0x22);
     processor->setMemoryByte(0xFFFC, 0x6A);
