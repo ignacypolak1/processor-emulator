@@ -198,11 +198,23 @@ namespace Processor {
         void INS_ROL_ZEROPAGE_HANDLE(Dword&, const Dword&);
         void INS_ROL_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
 
+        void INS_ASL_ACCUMULATOR_HANDLE(Dword&, const Dword&);
+        void INS_ASL_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_ASL_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_ASL_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_ASL_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+
         void INS_ROR_ACCUMULATOR_HANDLE(Dword&, const Dword&);
         void INS_ROR_ABSOLUTE_HANDLE(Dword&, const Dword&);
         void INS_ROR_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
         void INS_ROR_ZEROPAGE_HANDLE(Dword&, const Dword&);
         void INS_ROR_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
+
+        void INS_LSR_ACCUMULATOR_HANDLE(Dword&, const Dword&);
+        void INS_LSR_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_LSR_ABSOLUTE_X_HANDLE(Dword&, const Dword&);
+        void INS_LSR_ZEROPAGE_HANDLE(Dword&, const Dword&);
+        void INS_LSR_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
 
         void INS_JMP_ABSOLUTE_HANDLE(Dword&, const Dword&);
         void INS_JMP_INDIRECT_HANDLE(Dword&, const Dword&);

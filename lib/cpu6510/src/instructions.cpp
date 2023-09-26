@@ -134,11 +134,21 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_ROL_ABSOLUTE_X, &Processor::Processor::INS_ROL_ABSOLUTE_X_HANDLE},
         {INS_ROL_ZEROPAGE, &Processor::Processor::INS_ROL_ZEROPAGE_HANDLE},
         {INS_ROL_ZEROPAGE_X, &Processor::Processor::INS_ROL_ZEROPAGE_X_HANDLE},
+        {INS_ASL_ACCUMULATOR, &Processor::Processor::INS_ASL_ACCUMULATOR_HANDLE},
+        {INS_ASL_ABSOLUTE, &Processor::Processor::INS_ASL_ABSOLUTE_HANDLE},
+        {INS_ASL_ABSOLUTE_X, &Processor::Processor::INS_ASL_ABSOLUTE_X_HANDLE},
+        {INS_ASL_ZEROPAGE, &Processor::Processor::INS_ASL_ZEROPAGE_HANDLE},
+        {INS_ASL_ZEROPAGE_X, &Processor::Processor::INS_ASL_ZEROPAGE_X_HANDLE},
         {INS_ROR_ACCUMULATOR, &Processor::Processor::INS_ROR_ACCUMULATOR_HANDLE},
         {INS_ROR_ABSOLUTE, &Processor::Processor::INS_ROR_ABSOLUTE_HANDLE},
         {INS_ROR_ABSOLUTE_X, &Processor::Processor::INS_ROR_ABSOLUTE_X_HANDLE},
         {INS_ROR_ZEROPAGE, &Processor::Processor::INS_ROR_ZEROPAGE_HANDLE},
         {INS_ROR_ZEROPAGE_X, &Processor::Processor::INS_ROR_ZEROPAGE_X_HANDLE},
+        {INS_LSR_ACCUMULATOR, &Processor::Processor::INS_LSR_ACCUMULATOR_HANDLE},
+        {INS_LSR_ABSOLUTE, &Processor::Processor::INS_LSR_ABSOLUTE_HANDLE},
+        {INS_LSR_ABSOLUTE_X, &Processor::Processor::INS_LSR_ABSOLUTE_X_HANDLE},
+        {INS_LSR_ZEROPAGE, &Processor::Processor::INS_LSR_ZEROPAGE_HANDLE},
+        {INS_LSR_ZEROPAGE_X, &Processor::Processor::INS_LSR_ZEROPAGE_X_HANDLE},
         {INS_JMP_ABSOLUTE, &Processor::Processor::INS_JMP_ABSOLUTE_HANDLE},
         {INS_JMP_INDIRECT, &Processor::Processor::INS_JMP_INDIRECT_HANDLE},
         {INS_JSR, &Processor::Processor::INS_JSR_HANDLE},
@@ -1961,6 +1971,70 @@ void Processor::Processor::INS_ROL_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     set_flags_C(this, value, 0, 0x02, cycles, requested_cycles, "INS_ROL_ZEROPAGE_X");
 }
 
+void Processor::Processor::INS_ASL_ACCUMULATOR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regAValue = getRegisterValue('A');
+    Byte result = (regAValue << 1);
+    cycles--;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ASL_ACCUMULATOR");
+    set_flags_C(this, regAValue, 0, 0x02, cycles, requested_cycles, "INS_ASL_ACCUMULATOR");
+}
+
+void Processor::Processor::INS_ASL_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_ASL_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ASL_ABSOLUTE");
+    Byte result = (value << 1);
+    cycles--;
+
+    writeByte(address, result, cycles, requested_cycles, "INS_ASL_ABSOLUTE");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ASL_ABSOLUTE");
+    set_flags_C(this, value, 0, 0x02, cycles, requested_cycles, "INS_ASL_ABSOLUTE");
+}
+
+void Processor::Processor::INS_ASL_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_ASL_ABSOLUTE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 65536;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ASL_ABSOLUTE_X");
+    Byte result = (value << 1);
+    cycles-=2;
+    writeByte(address, result, cycles, requested_cycles, "INS_ASL_ABSOLUTE_X");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ASL_ABSOLUTE_X");
+    set_flags_C(this, value, 0, 0x02, cycles, requested_cycles, "INS_ASL_ABSOLUTE_X");
+}
+
+void Processor::Processor::INS_ASL_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_ASL_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ASL_ZEROPAGE");
+
+    Byte result = (value << 1);
+    cycles--;
+    writeByte(address, result, cycles, requested_cycles, "INS_ASL_ZEROPAGE");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ASL_ZEROPAGE");
+    set_flags_C(this, value, 0, 0x02, cycles, requested_cycles, "INS_ASL_ZEROPAGE");
+}
+
+void Processor::Processor::INS_ASL_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_ASL_ZEROPAGE_X");
+
+    Byte regXValue = getRegisterValue('X');
+    address = (address + regXValue) % 256;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_ASL_ZEROPAGE_X");
+    Byte result = (value << 1);
+    cycles-=2;
+    writeByte(address, result, cycles, requested_cycles, "INS_ASL_ZEROPAGE_X");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_ASL_ZEROPAGE_X");
+    set_flags_C(this, value, 0, 0x02, cycles, requested_cycles, "INS_ASL_ZEROPAGE_X");
+}
+
 void Processor::Processor::INS_ROR_ACCUMULATOR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Byte regAValue = getRegisterValue('A');
     Byte result = (regAValue >> 1) | (getProcessorStatusFlag('C') << 7);
@@ -2023,6 +2097,70 @@ void Processor::Processor::INS_ROR_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_ROR_ZEROPAGE_X");
     set_flags_C(this, value, 0, 0x03, cycles, requested_cycles, "INS_ROR_ZEROPAGE_X");
+}
+
+void Processor::Processor::INS_LSR_ACCUMULATOR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte regAValue = getRegisterValue('A');
+    Byte result = (regAValue >> 1);
+    cycles--;
+    setRegisterValue('A', result);
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_LSR_ACCUMULATOR");
+    set_flags_C(this, regAValue, 0, 0x03, cycles, requested_cycles, "INS_LSR_ACCUMULATOR");
+}
+
+void Processor::Processor::INS_LSR_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_LSR_ABSOLUTE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LSR_ABSOLUTE");
+    Byte result = (value >> 1);
+    cycles--;
+    writeByte(address, result, cycles, requested_cycles, "INS_LSR_ABSOLUTE");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_LSR_ABSOLUTE");
+    set_flags_C(this, value, 0, 0x03, cycles, requested_cycles, "INS_LSR_ABSOLUTE");
+}
+
+void Processor::Processor::INS_LSR_ABSOLUTE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_LSR_ABSOLUTE_X");
+    Byte regXValue = getRegisterValue('X');
+
+    address = (address + regXValue) % 65536;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LSR_ABSOLUTE_X");
+    Byte result = (value >> 1);
+    cycles-=2;
+    writeByte(address, result, cycles, requested_cycles, "INS_LSR_ABSOLUTE_X");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_LSR_ABSOLUTE_X");
+    set_flags_C(this, value, 0, 0x03, cycles, requested_cycles, "INS_LSR_ABSOLUTE_X");
+}
+
+void Processor::Processor::INS_LSR_ZEROPAGE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LSR_ZEROPAGE");
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LSR_ZEROPAGE");
+
+    Byte result = (value >> 1);
+    cycles--;
+
+    writeByte(address, result, cycles, requested_cycles, "INS_LSR_ZEROPAGE");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_LSR_ZEROPAGE");
+    set_flags_C(this, value, 0, 0x03, cycles, requested_cycles, "INS_LSR_ZEROPAGE");
+}
+
+void Processor::Processor::INS_LSR_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte address = fetchByte(cycles, requested_cycles, "INS_LSR_ZEROPAGE_X");
+
+    Byte regXValue = getRegisterValue('X');
+    address = (address + regXValue) % 256;
+
+    Byte value = readByte(address, cycles, requested_cycles, "INS_LSR_ZEROPAGE_X");
+    Byte result = (value >> 1);
+    cycles-=2;
+    writeByte(address, result, cycles, requested_cycles, "INS_LSR_ZEROPAGE_X");
+
+    set_flags_NZ(this, result, cycles, requested_cycles, "INS_LSR_ZEROPAGE_X");
+    set_flags_C(this, value, 0, 0x03, cycles, requested_cycles, "INS_LSR_ZEROPAGE_X");
 }
 
 void Processor::Processor::INS_JMP_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
