@@ -2028,7 +2028,6 @@ void Processor::Processor::INS_ROR_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
 void Processor::Processor::INS_JMP_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word address = fetchWord(cycles, requested_cycles, "INS_JMP_ABSOLUTE");
     setProgramCounter(address, cycles, requested_cycles, "INS_JMP_ABSOLUTE");
-    cycles--;
 }
 
 void Processor::Processor::INS_JMP_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -2040,7 +2039,6 @@ void Processor::Processor::INS_JMP_INDIRECT_HANDLE(Dword &cycles, const Dword &r
     Word address = (addressMSB << 8) | addressLSB;
 
     setProgramCounter(address, cycles, requested_cycles, "INS_JMP_INDIRECT");
-    cycles--;
 }
 
 void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -2053,7 +2051,7 @@ void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_
 void Processor::Processor::INS_RTS_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word address = pullWordFromStack(cycles, requested_cycles, "INS_RTS");
     setProgramCounter(address + 1, cycles, requested_cycles, "INS_RTS");
-    cycles-=4;
+    cycles-=3;
 }
 
 void Processor::Processor::INS_RTI_HANDLE(Dword &cycles, const Dword &requested_cycles) {
@@ -2062,5 +2060,5 @@ void Processor::Processor::INS_RTI_HANDLE(Dword &cycles, const Dword &requested_
 
     Word address = pullWordFromStack(cycles, requested_cycles, "INS_RTI");
     setProgramCounter(address);
-    cycles-=3;
+    cycles-=2;
 }

@@ -3457,6 +3457,25 @@ TEST_F(ProcessorTest, INS_ROR_ZEROPAGE_X_TEST) {
     EXPECT_EQ(processor->getProcessorStatusFlag('C'), 0);
 }
 
+TEST_F(ProcessorTest, INS_JMP_ABSOLUTE_TEST) {
+    processor->setMemoryByte(0xFFFC, 0x4C);
+    processor->setMemoryWord(0xFFFD, 0x4243);
+
+    processor->execute(3);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0x4243);
+}
+
+TEST_F(ProcessorTest, INS_JMP_INDIRECT_TEST) {
+    processor->setMemoryByte(0xFFFC, 0x6C);
+    processor->setMemoryWord(0xFFFD, 0x4243);
+    processor->setMemoryWord(0x4243, 0x5642);
+
+    processor->execute(5);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0x5642);
+}
+
 TEST_F(ProcessorTest, INS_JSR_TEST) {
     processor->setMemoryByte(0xFFFC, 0x20);
     processor->setMemoryWord(0xFFFD, 0x4243);
@@ -3465,3 +3484,39 @@ TEST_F(ProcessorTest, INS_JSR_TEST) {
 
     EXPECT_EQ(processor->getProgramCounter(), 0x4243);
 }
+
+TEST_F(ProcessorTest, INS_RTS_TEST) {
+    processor->setMemoryByte(0xFFFC, 0x20);
+    processor->setMemoryWord(0xFFFD, 0x4243);
+
+    processor->execute(6);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0x4243);
+
+    processor->setMemoryByte(0x4243, 0x60);
+
+    processor->execute(6);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFF);
+}
+
+TEST_F(ProcessorTest, INS_RTI_TEST) {
+    processor->setMemoryByte(0xFFFC, 0x20);
+    processor->setMemoryWord(0xFFFD, 0x4243);
+
+    processor->execute(6);
+
+    processor->setStackPointer(processor->getStackPointer()-1);
+    processor->setMemoryByte(processor->getStackPointerMemoryAddress(), 0x16);
+
+    EXPECT_EQ(processor->getProgramCounter(), 0x4243);
+
+    processor->setMemoryByte(0x4243, 0x40);
+
+    processor->execute(6);
+
+    EXPECT_EQ(processor->getProcessorStatusRegister(), 0x16);
+    EXPECT_EQ(processor->getProgramCounter(), 0xFFFE);
+}
+
+
