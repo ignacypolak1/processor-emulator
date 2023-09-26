@@ -163,7 +163,10 @@
 #define INS_ROR_ZEROPAGE 0x66
 #define INS_ROR_ZEROPAGE_X 0x76
 
-
+#define INS_JMP_ABSOLUTE 0x4C
+#define INS_JMP_INDIRECT 0x6C
 #define INS_JSR 0x20
+#define INS_RTS 0x60
+#define INS_RTI 0x40
 
 #endif

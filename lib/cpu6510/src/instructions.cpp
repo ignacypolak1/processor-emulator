@@ -21,7 +21,6 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_LDY_ABSOLUTE_X, &Processor::Processor::INS_LDY_ABSOLUTE_X_HANDLE},
         {INS_LDY_ZEROPAGE, &Processor::Processor::INS_LDY_ZEROPAGE_HANDLE},
         {INS_LDY_ZEROPAGE_X, &Processor::Processor::INS_LDY_ZEROPAGE_X_HANDLE},
-        {INS_JSR, &Processor::Processor::INS_JSR_HANDLE},
         {INS_STA_ABSOLUTE, &Processor::Processor::INS_STA_ABSOLUTE_HANDLE},
         {INS_STA_ABSOLUTE_X, &Processor::Processor::INS_STA_ABSOLUTE_X_HANDLE},
         {INS_STA_ABSOLUTE_Y, &Processor::Processor::INS_STA_ABSOLUTE_Y_HANDLE},
@@ -139,7 +138,12 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_ROR_ABSOLUTE, &Processor::Processor::INS_ROR_ABSOLUTE_HANDLE},
         {INS_ROR_ABSOLUTE_X, &Processor::Processor::INS_ROR_ABSOLUTE_X_HANDLE},
         {INS_ROR_ZEROPAGE, &Processor::Processor::INS_ROR_ZEROPAGE_HANDLE},
-        {INS_ROR_ZEROPAGE_X, &Processor::Processor::INS_ROR_ZEROPAGE_X_HANDLE}
+        {INS_ROR_ZEROPAGE_X, &Processor::Processor::INS_ROR_ZEROPAGE_X_HANDLE},
+        {INS_JMP_ABSOLUTE, &Processor::Processor::INS_JMP_ABSOLUTE_HANDLE},
+        {INS_JMP_INDIRECT, &Processor::Processor::INS_JMP_INDIRECT_HANDLE},
+        {INS_JSR, &Processor::Processor::INS_JSR_HANDLE},
+        {INS_RTS, &Processor::Processor::INS_RTS_HANDLE},
+        {INS_RTI, &Processor::Processor::INS_RTI_HANDLE},
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -2021,9 +2025,42 @@ void Processor::Processor::INS_ROR_ZEROPAGE_X_HANDLE(Dword &cycles, const Dword 
     set_flags_C(this, value, 0, 0x03, cycles, requested_cycles, "INS_ROR_ZEROPAGE_X");
 }
 
+void Processor::Processor::INS_JMP_ABSOLUTE_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = fetchWord(cycles, requested_cycles, "INS_JMP_ABSOLUTE");
+    setProgramCounter(address, cycles, requested_cycles, "INS_JMP_ABSOLUTE");
+    cycles--;
+}
+
+void Processor::Processor::INS_JMP_INDIRECT_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word addressAddress = fetchWord(cycles, requested_cycles, "INS_JMP_INDIRECT");
+
+    Byte addressLSB = readByte(addressAddress, cycles, requested_cycles, "INS_JMP_INDIRECT");
+    Byte addressMSB = readByte((addressAddress & 0xFF00) | (((addressAddress & 0x00FF) + 1) % 256), cycles, requested_cycles, "INS_JMP_INDIRECT");
+
+    Word address = (addressMSB << 8) | addressLSB;
+
+    setProgramCounter(address, cycles, requested_cycles, "INS_JMP_INDIRECT");
+    cycles--;
+}
+
 void Processor::Processor::INS_JSR_HANDLE(Dword &cycles, const Dword &requested_cycles) {
     Word subroutineAddress = fetchWord(cycles, requested_cycles, "INS_JSR");
-    pushWordToStack(getProgramCounter()-1, cycles, requested_cycles, "INS_JSR");
+    pushWordToStack(getProgramCounter() - 1, cycles, requested_cycles, "INS_JSR");
     setProgramCounter(subroutineAddress, cycles, requested_cycles, "INS_JSR");
     cycles--;
+}
+
+void Processor::Processor::INS_RTS_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Word address = pullWordFromStack(cycles, requested_cycles, "INS_RTS");
+    setProgramCounter(address + 1, cycles, requested_cycles, "INS_RTS");
+    cycles-=4;
+}
+
+void Processor::Processor::INS_RTI_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    Byte status = pullByteFromStack(cycles, requested_cycles, "INS_RTI");
+    setProcessorStatusRegister(status);
+
+    Word address = pullWordFromStack(cycles, requested_cycles, "INS_RTI");
+    setProgramCounter(address);
+    cycles-=3;
 }

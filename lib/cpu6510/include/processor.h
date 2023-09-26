@@ -204,7 +204,11 @@ namespace Processor {
         void INS_ROR_ZEROPAGE_HANDLE(Dword&, const Dword&);
         void INS_ROR_ZEROPAGE_X_HANDLE(Dword&, const Dword&);
 
+        void INS_JMP_ABSOLUTE_HANDLE(Dword&, const Dword&);
+        void INS_JMP_INDIRECT_HANDLE(Dword&, const Dword&);
         void INS_JSR_HANDLE(Dword&, const Dword&);
+        void INS_RTS_HANDLE(Dword&, const Dword&);
+        void INS_RTI_HANDLE(Dword&, const Dword&);
 
     public:
         Processor();
