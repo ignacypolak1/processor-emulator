@@ -1,5 +1,8 @@
 #include <algorithm>
 #include "../include/instructions.h"
+#include <sstream>
+#include <iostream>
+
 
 Processor::Processor::Processor() {
     resetCPU();
@@ -490,6 +493,26 @@ Processor::Word Processor::Processor::pullWordFromStack(Dword &cycles, const Dwo
         printf("Cycle %i: %s: Stack pointer incremented by 2. Now pointing to: 0x%04X\n", requested_cycles-cycles, opname.c_str(), getStackPointerMemoryAddress());
     #endif
     return value;
+}
+
+/**
+* Write block of instructions to processor memory
+*/
+void Processor::Processor::writeMemoryBlock(std::string reprString, Word starting_address) {
+    std::istringstream iss(reprString);
+
+    std::string byteStr;
+    while(iss >> byteStr) {
+        try {
+            Byte byteValue = std::stoi(byteStr, nullptr, 16);
+            setMemoryByte(starting_address, byteValue);
+            starting_address++;
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "Invalid byte: " << byteStr << std::endl;
+        } catch (const std::out_of_range& e) {
+            std::cerr << "Byte out of range: " << byteStr << std::endl;
+        }
+    }
 }
 
 

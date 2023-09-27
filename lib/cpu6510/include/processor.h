@@ -222,6 +222,9 @@ namespace Processor {
         void INS_RTS_HANDLE(Dword&, const Dword&);
         void INS_RTI_HANDLE(Dword&, const Dword&);
 
+        void INS_BRK_HANDLE(Dword&, const Dword&);
+        void INS_NOP_HANDLE(Dword&, const Dword&);
+
     public:
         Processor();
         ~Processor();
@@ -257,6 +260,8 @@ namespace Processor {
 
         void setMemoryByte(const Word&, const Byte);
         void setMemoryWord(const Word&, const Word);
+
+        void writeMemoryBlock(std::string, Word);
 
         void execute(Dword);
     };

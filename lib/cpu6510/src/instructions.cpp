@@ -154,6 +154,8 @@ std::unordered_map<Processor::Byte, Processor::InstructionFunction> Processor::P
         {INS_JSR, &Processor::Processor::INS_JSR_HANDLE},
         {INS_RTS, &Processor::Processor::INS_RTS_HANDLE},
         {INS_RTI, &Processor::Processor::INS_RTI_HANDLE},
+        {INS_BRK, &Processor::Processor::INS_BRK_HANDLE},
+        {INS_NOP, &Processor::Processor::INS_NOP_HANDLE},
 };
 
 void set_flags_NZ(Processor::Processor *processor, Processor::Byte value, Processor::Dword &cycles, const Processor::Dword &requested_cycles, const std::string opname) {
@@ -1296,7 +1298,6 @@ void Processor::Processor::INS_CMP_INDIRECT_INDEXED_HANDLE(Dword &cycles, const 
     Byte regAValue = getRegisterValue('A');
 
     Byte result = regAValue + (~value) + 1;
-    cycles--;
 
     set_flags_NZ(this, result, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
     set_flags_C(this, regAValue, value, 0x01, cycles, requested_cycles, "INS_CMP_INDIRECT_INDEXED");
@@ -2199,4 +2200,18 @@ void Processor::Processor::INS_RTI_HANDLE(Dword &cycles, const Dword &requested_
     Word address = pullWordFromStack(cycles, requested_cycles, "INS_RTI");
     setProgramCounter(address);
     cycles-=2;
+}
+
+void Processor::Processor::INS_BRK_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    fetchByte(cycles, requested_cycles, "INS_BRK");
+
+    setProcessorStatusFlag('I');
+    pushWordToStack(getProgramCounter(), cycles, requested_cycles, "INS_BRK");
+    pushByteToStack((getProcessorStatusRegister() | 0x10), cycles, requested_cycles, "INS_BRK");
+
+    setProgramCounter(readWord(0xFFFE, cycles, requested_cycles, "INS_BRK"), cycles, requested_cycles, "INS_BRK");
+}
+
+void Processor::Processor::INS_NOP_HANDLE(Dword &cycles, const Dword &requested_cycles) {
+    cycles--;
 }

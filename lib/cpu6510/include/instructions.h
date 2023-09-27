@@ -181,4 +181,7 @@
 #define INS_RTS 0x60
 #define INS_RTI 0x40
 
+#define INS_BRK 0x00
+#define INS_NOP 0xEA
+
 #endif

@@ -1825,7 +1825,7 @@ TEST_F(ProcessorTest, INS_ADC_INDIRECT_INDEXED) {
     processor->setMemoryWord(0x42, 0x4848);
     processor->setMemoryByte(0x4849, 0x01);
 
-    processor->execute(5);
+    processor->execute(6);
     processor->setMemoryByte(0x0025, 0x00);
 
     EXPECT_EQ(processor->getRegisterValue('A'), 0x00);
@@ -1843,7 +1843,7 @@ TEST_F(ProcessorTest, INS_ADC_INDIRECT_INDEXED) {
     processor->setMemoryWord(0x42, 0x4848);
     processor->setMemoryByte(0x4849, 0x10);
 
-    processor->execute(5);
+    processor->execute(6);
     processor->setMemoryByte(0x0026, 0x82);
 
     EXPECT_EQ(processor->getRegisterValue('A'), 0x82);
