@@ -3,7 +3,7 @@
 /**
 * Function checking if given address is in specified range
 */
-inline bool inRange(Processor::Word value, Processor::Word x, Processor::Word y) {
+inline bool Processor::inRange(Word value, Word x, Word y) {
     return value >= x && value <= y;
 }
 
