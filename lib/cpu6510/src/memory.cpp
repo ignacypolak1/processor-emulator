@@ -103,7 +103,7 @@ Processor::Byte& Processor::Memory::operator [](Word address) {
 /**
 * Check if cartridge is inserted
 */
-bool Processor::Memory::isCartridgeInserted() {
+bool Processor::Memory::isCartridgeInserted() const {
     return bCartridgeInserted;
 }
 

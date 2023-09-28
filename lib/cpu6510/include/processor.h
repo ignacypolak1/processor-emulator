@@ -246,6 +246,11 @@ namespace Processor {
         void setMemoryByte(const Word&, const Byte);
         void setMemoryWord(const Word&, const Word);
 
+        MemoryType getMemoryBankOfAddress(const Word);
+
+        bool isCartridgeInserted() const;
+        void setCartridgeInserted(bool);
+
         void writeMemoryBlock(std::string, Word);
 
         void execute(Dword);

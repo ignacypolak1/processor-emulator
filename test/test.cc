@@ -3652,5 +3652,3 @@ TEST_F(ProcessorTest, INS_RTI_TEST) {
     EXPECT_EQ(processor->getProcessorStatusRegister(), 0x16);
     EXPECT_EQ(processor->getProgramCounter(), 0xFFFE);
 }
-
-

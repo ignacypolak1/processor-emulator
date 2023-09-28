@@ -32,7 +32,6 @@ namespace Processor {
         M_ROM_KERNEL,
         M_ROM_CHARACTER_GENERATOR,
         M_RAM_FREE_MACHINE_LANGUAGE_STORAGE_AREA_2,
-        M_RAM_INTERFACE_EXTENSION,
         M_RAM_FREE_MACHINE_LANGUAGE_STORAGE_AREA_3,
         M_IO_CPU_IO_PORT,
         M_IO_VIC_II,
@@ -67,7 +66,7 @@ namespace Processor {
         void initialize();
         MemoryType getMemoryBankOfAddress(Word);
 
-        bool isCartridgeInserted();
+        bool isCartridgeInserted() const;
         void setCartridgeInserted(bool);
     };
 }

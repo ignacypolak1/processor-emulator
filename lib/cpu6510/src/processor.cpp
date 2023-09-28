@@ -494,4 +494,23 @@ void Processor::Processor::writeMemoryBlock(std::string reprString, Word startin
     }
 }
 
+/**
+* Get memory bank of address
+*/
+Processor::MemoryType Processor::Processor::getMemoryBankOfAddress(const Word address) {
+    return memory.getMemoryBankOfAddress(address);
+}
 
+/**
+* Check if cartridge is inserted
+*/
+bool Processor::Processor::isCartridgeInserted() const {
+    return memory.isCartridgeInserted();
+}
+
+/**
+* Set cartridge inserted or ejected
+*/
+void Processor::Processor::setCartridgeInserted(bool value) {
+    memory.setCartridgeInserted(value);
+}
