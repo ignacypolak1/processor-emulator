@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdexcept>
-#include <cstdint>
 #include <array>
 #include <string>
 #include <optional>
@@ -12,22 +10,9 @@
 #include <map>
 #include <unordered_map>
 
-#define MAX_MEMORY (1024*64)
+#include "memory.h"
 
 namespace Processor {
-
-    typedef uint8_t Byte;
-    typedef uint16_t Word;
-    typedef uint32_t Dword;
-
-    class Processor;
-    typedef void (Processor::*InstructionFunction)(Dword&, const Dword&);
-
-    struct Memory {
-        Byte data[MAX_MEMORY];
-        void initialize();
-        Byte& operator [](Word address);
-    };
 
     class Processor {
     public:

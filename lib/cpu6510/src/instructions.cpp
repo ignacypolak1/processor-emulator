@@ -1,4 +1,4 @@
-#include "../include/instructions.h"
+#include "instructions.h"
 
 #define NEGATIVE_MASK 0x80
 

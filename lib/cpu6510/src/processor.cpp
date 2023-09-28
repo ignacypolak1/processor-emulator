@@ -1,7 +1,7 @@
-#include <algorithm>
-#include "../include/instructions.h"
+#include "instructions.h"
 #include <sstream>
 #include <iostream>
+#include "programs.h"
 
 
 Processor::Processor::Processor() {
@@ -210,27 +210,6 @@ void Processor::Processor::resetProcessorStatusFlag(const char &flag) {
             sprintf(errorMessage, "Flag: %c doesn't exists", flag);
             throw std::runtime_error(errorMessage);
     }
-}
-
-/**
-* Operator override for getting byte of instruction from processor memory.
-*
-* @param address Address to get byte of instruction from.
-*/
-Processor::Byte& Processor::Memory::operator [](Word address) {
-    if(address < MAX_MEMORY) {
-        return data[address];
-    }
-    else {
-        throw std::out_of_range("Emulated processor out of memory");
-    }
-}
-
-/**
-* Initialize of processor memory (fill entire processor memory with 0's).
-*/
-void Processor::Memory::initialize() {
-    std::fill(data, data+MAX_MEMORY, 0);
 }
 
 /**

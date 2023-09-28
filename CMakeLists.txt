@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(cpu6510 STATIC
         lib/cpu6510/src/processor.cpp
         lib/cpu6510/src/instructions.cpp
+        lib/cpu6510/src/memory.cpp
 )
 
 # Include library headers to library
