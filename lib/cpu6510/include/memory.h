@@ -4,69 +4,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cstdint>
-
-#define MEM_RAM_ZEROPAGE_START 0x0000
-#define MEM_RAM_ZEROPAGE_END 0x00FF
-
-#define MEM_RAM_STACK_START 0x0100
-#define MEM_RAM_STACK_END 0x01FF
-
-#define MEM_RAM_OS_AND_BASIC_POINTERS_START 0x0200
-#define MEM_RAM_OS_AND_BASIC_POINTERS_END 0x03FF
-
-#define MEM_RAM_SCREEN_START 0x0400
-#define MEM_RAM_SCREEN_END 0x07FF
-
-#define MEM_RAM_FREE_BASIC_PROGRAM_STORAGE_AREA_START 0x0800
-#define MEM_RAM_FREE_BASIC_PROGRAM_STORAGE_AREA_END 0x9FFF
-
-#define MEM_RAM_FREE_MACHINE_LANGUAGE_PROGRAM_STORAGE_AREA_1_START 0xA000
-#define MEM_RAM_FREE_MACHINE_LANGUAGE_PROGRAM_STORAGE_AREA_1_END 0xBFFF
-
-#define MEM_RAM_FREE_MACHINE_LANGUAGE_PROGRAM_STORAGE_AREA_2_START 0xC000
-#define MEM_RAM_FREE_MACHINE_LANGUAGE_PROGRAM_STORAGE_AREA_2_END 0xCFFF
-
-#define MEM_RAM_INTERFACE_EXTENSION_START 0xDE00
-#define MEM_RAM_INTERFACE_EXTENSION_END 0xDFFF
-
-#define MEM_RAM_FREE_MACHINE_LANGUAGE_PROGRAM_STORAGE_AREA_3_START 0xE000
-#define MEM_RAM_FREE_MACHINE_LANGUAGE_PROGRAM_STORAGE_AREA_3_END 0xFFFF
-
-#define MEM_ROM_CARTRIDGE_LOW_START 0x8000
-#define MEM_ROM_CARTRIDGE_LOW_END 0x9FFF
-
-#define MEM_ROM_BASIC_INTEPRETER_OR_CARTRIDGE_HIGH_START 0xA000
-#define MEM_ROM_BASIC_INTEPRETER_OR_CARTRIDGE_HIGH_END 0xBFFF
-
-#define MEM_ROM_CHARACTER_GENERATOR_ROM_START 0xD000
-#define MEM_ROM_CHARACTER_GENERATOR_ROM_END 0xDFFF
-
-#define MEM_ROM_KERNEL_OR_CARTRIDGE_HIGH_START 0xE000
-#define MEM_ROM_KERNEL_OR_CARTRIDGE_HIGH_END 0xFFFF
-
-#define MEM_IO_CPU_IO_PORT_START 0x0000
-#define MEM_IO_CPU_IO_PORT_END 0x0001
-
-#define MEM_IO_VIC_II_REGISTERS_START 0xD000
-#define MEM_IO_VIC_II_REGISTERS_END 0xD3FF
-
-#define MEM_IO_SID_REGISTERS_START 0xD400
-#define MEM_IO_SID_REGISTERS_END 0xD7FF
-
-#define MEM_IO_COLOR_MEMORY_START 0xD800
-#define MEM_IO_COLOR_MEMORY_END 0xDBFF
-
-#define MEM_IO_CIA_1_START 0xDC00
-#define MEM_IO_CIA_1_END 0xDCFF
-
-#define MEM_IO_CIA_2_START 0xDD00
-#define MEM_IO_CIA_2_END 0xDDFF
-
-#define MEM_IO_1_START 0xDE00
-#define MEM_IO_1_END 0xDEFF
-
-#define MEM_IO_2_START 0xDF00
-#define MEM_IO_2_END 0xDFFF
+#include <list>
 
 #define MAX_MEMORY (1024*64)
 
@@ -76,15 +14,61 @@ namespace Processor {
     typedef uint16_t Word;
     typedef uint32_t Dword;
 
-    class Processor;
+    inline bool inRange(Word, Word, Word);
 
+    class Processor;
     typedef void (Processor::*InstructionFunction)(Dword &, const Dword &);
 
+    enum MemoryType {
+        M_UNDEFINED,
+        M_RAM_ZEROPAGE,
+        M_RAM_STACK,
+        M_RAM_OS_AND_BASIC_POINTERS,
+        M_RAM_SCREEN_MEMORY,
+        M_RAM_FREE_BASIC_PROGRAM_STORAGE_AREA,
+        M_RAM_FREE_MACHINE_LANGUAGE_STORAGE_AREA_1,
+        M_ROM_BASIC_INTERPRETER,
+        M_ROM_CARTRIDGE_HIGH,
+        M_ROM_KERNEL,
+        M_ROM_CHARACTER_GENERATOR,
+        M_RAM_FREE_MACHINE_LANGUAGE_STORAGE_AREA_2,
+        M_RAM_INTERFACE_EXTENSION,
+        M_RAM_FREE_MACHINE_LANGUAGE_STORAGE_AREA_3,
+        M_IO_CPU_IO_PORT,
+        M_IO_VIC_II,
+        M_IO_SID,
+        M_IO_COLOR,
+        M_IO_CIA_1,
+        M_IO_CIA_2,
+        M_IO_IO_1,
+        M_IO_IO_2,
+    };
+
+    struct MemorySegment {
+        Word start;
+        Word end;
+        MemoryType type;
+
+        MemorySegment(Word, Word, MemoryType);
+        MemoryType getType(const Byte, const bool) const;
+
+    };
+
     struct Memory {
+
+    private:
+        bool bCartridgeInserted = false;
+        static std::list<MemorySegment> segments;
+
+    public:
         Byte data[MAX_MEMORY];
+        Byte &operator[](Word address);
 
         void initialize();
-        Byte &operator[](Word address);
+        MemoryType getMemoryBankOfAddress(Word);
+
+        bool isCartridgeInserted();
+        void setCartridgeInserted(bool);
     };
 }
 
