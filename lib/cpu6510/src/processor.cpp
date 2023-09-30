@@ -2,10 +2,15 @@
 #include <sstream>
 #include <iostream>
 #include "programs.h"
+#include <characters.h>
 
 
 Processor::Processor::Processor() : vic2((Byte*)(memory.data)) {
     resetCPU();
+    writeMemoryBlock(characterSet, sizeof(characterSet)/sizeof(Byte), 0xD100); // Load character set to memory
+
+    Byte screenMemoryChars[] = {1,5,6,12};
+    writeMemoryBlock(screenMemoryChars, sizeof(screenMemoryChars)/sizeof(Byte), 0x0400); // Load some indexes to screen memory
 }
 
 Processor::Processor::~Processor() {
@@ -493,6 +498,12 @@ void Processor::Processor::writeMemoryBlock(std::string reprString, Word startin
         } catch (const std::out_of_range& e) {
             std::cerr << "Byte out of range: " << byteStr << std::endl;
         }
+    }
+}
+
+void Processor::Processor::writeMemoryBlock(Byte byteArray[], uint16_t size, Word starting_address) {
+    for (uint16_t i = 0; i < size; ++i) {
+        setMemoryByte(starting_address + i, byteArray[i]);
     }
 }
 

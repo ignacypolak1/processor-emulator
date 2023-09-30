@@ -19,15 +19,6 @@ TEST_F(ProcessorTest, INITIALIZATION_TEST) {
     EXPECT_EQ(processor->getProgramCounter(), 0xFFFC) << "Program Counter initialized successfully";
     EXPECT_EQ(processor->getStackPointerMemoryAddress(), 0x01FF) << "Stack Pointer initialized successfully";
 
-    bool nonZeroMemory = false;
-    for(const auto& value: processor->getMemory()) {
-        if(value != 0)
-        {
-            nonZeroMemory = true;
-        }
-    }
-    EXPECT_FALSE(nonZeroMemory);
-
     bool nonZeroRegister = false;
     char generalPurposeRegisters[] = {'A', 'X', 'Y'};
     for(const auto& reg : generalPurposeRegisters) {

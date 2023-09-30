@@ -83,7 +83,7 @@ std::list<Processor::MemorySegment> Processor::Memory::segments = {
 * Initialize of processor memory (fill entire processor memory with 0's).
 */
 void Processor::Memory::initialize() {
-    std::fill(data, data+MAX_MEMORY, 0);
+    std::fill(data, data+MAX_MEMORY, 0x00);
 }
 
 /**

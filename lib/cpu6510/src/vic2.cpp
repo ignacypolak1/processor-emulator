@@ -83,7 +83,10 @@ unsigned int Processor::Vic2::createShader(const std::string &vertexShader, cons
 }
 
 Processor::Vic2::Vic2(Byte *memory) {
+
     screenMemoryPtr = memory+0x0400;
+    baseAddressPtr = memory+0xD000;
+    characterGeneratorPtr = memory+0xD100;
 
     xResolution = 320;
     yResolution = 200;
@@ -153,6 +156,8 @@ void Processor::Vic2::showWindow() {
 
     while(!glfwWindowShouldClose(window)) {
 
+        Byte* characters = translateCharactersFromScreenMemory();
+
         glClear(GL_COLOR_BUFFER_BIT);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
@@ -163,6 +168,18 @@ void Processor::Vic2::showWindow() {
 
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &IBO);
+}
+
+Processor::Byte* Processor::Vic2::translateCharactersFromScreenMemory() {
+    Byte* translatedCharacters = new Byte[40*25*8*8];
+
+    for(int i = 0; i < 40*25; i++) {
+        for(int j = 0; j < 8; j++) {
+         translatedCharacters[i*8+j] = characterGeneratorPtr[screenMemoryPtr[i]*8+j];
+        }
+    }
+
+    return translatedCharacters;
 }
 
 Processor::Vic2::~Vic2() {

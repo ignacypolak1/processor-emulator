@@ -254,6 +254,9 @@ namespace Processor {
         void setCartridgeInserted(bool);
 
         void writeMemoryBlock(std::string, Word);
+        void writeMemoryBlock(Byte[], uint16_t, Word);
+
+        void uploadCharacterSet(Byte[], uint16_t, Word);
 
         void execute(Dword);
     };
