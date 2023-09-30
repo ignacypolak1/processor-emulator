@@ -1,9 +1,94 @@
 #include "memory.h"
 #include "vic2.h"
-//0x07FF end of buffer
+
+#define ASSERT(x) (!(x)) ? __builtin_trap() : (void)(0);
+#define GLCall(x) GLClearError(); x; ASSERT(GLLogCall(#x, __FILE__, __LINE__));
+
+static void GLClearError() {
+    while(glGetError() != GL_NO_ERROR);
+}
+
+static bool GLLogCall(const char* function, const char* file, int line) {
+    while(GLenum error = glGetError()) {
+        printf("[OpenGL Error] (%d) \n File: %s, Function: %s, Line: %i \n", error, file, function, line);
+        return false;
+    }
+    return true;
+}
+
+const char* Shaders::vertexShader = "#version 330 core\n"
+                                    "layout(location=0) in vec4 position;\n"
+                                    "\n"
+                                    "void main()\n"
+                                    "{\n"
+                                    "gl_Position = position;\n"
+                                    "}";
+
+const char* Shaders::fragmentShaderBitmap = "#version 330 core\n"
+                                      "#extension GL_ARB_separate_shader_objects : enable\n"
+                                      "layout(location=0) out vec4 color;\n"
+                                      "void main()\n"
+                                      "{\n"
+                                      "color = vec4(0.0, 0.0, 1.0, 1.0);\n"
+                                      "}";
+
+const char* Shaders::fragmentShaderText = "#version 330 core\n"
+                                            "#extension GL_ARB_separate_shader_objects : enable\n"
+                                            "layout(location=0) out vec4 color;\n"
+                                            "void main()\n"
+                                            "{\n"
+                                            "color = vec4(0.0, 0.0, 1.0, 1.0);\n"
+                                            "}";
+
+unsigned int Processor::Vic2::compileShader(unsigned int type, const std::string& source) {
+    unsigned int id = glCreateShader(type);
+    const char* src = source.c_str();
+
+    glShaderSource(id, 1, &src, nullptr);
+    glCompileShader(id);
+
+    int result;
+    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+
+    if(result == GL_FALSE) {
+        int length;
+        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+        char* message = (char*)alloca(length*sizeof(char));
+        glGetShaderInfoLog(id, length, &length, message);
+        printf("Failed to compile %s shader\n", (type == GL_VERTEX_SHADER ? "vertex" : "fragment"));
+        printf("%s\n", message);
+        glDeleteShader(id);
+        return 0;
+    }
+
+    return id;
+}
+
+unsigned int Processor::Vic2::createShader(const std::string &vertexShader, const std::string &fragmentShader) {
+    unsigned int program = glCreateProgram();
+
+    unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
+    unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+
+    glLinkProgram(program);
+    glValidateProgram(program);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    return program;
+}
 
 Processor::Vic2::Vic2(Byte *memory) {
     screenMemoryPtr = memory+0x0400;
+
+    xResolution = 320;
+    yResolution = 200;
+
+    aspectRatio = (float)xResolution/(float)yResolution;
 }
 
 void Processor::Vic2::showWindow() {
@@ -16,19 +101,21 @@ void Processor::Vic2::showWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-    window = glfwCreateWindow(320, 200, "Commodore64", NULL, NULL);
+    window = glfwCreateWindow(xResolution, yResolution, "Commodore64", NULL, NULL);
+    glfwMakeContextCurrent(window);
 
     if(!window) {
         glfwTerminate();
         throw std::runtime_error("GLFW window failed to create\n");
     }
 
-    glfwMakeContextCurrent(window);
-
     glewExperimental = GL_TRUE;
     if(glewInit() != GLEW_OK) {
         throw std::runtime_error("Cannot initialize glew\n");
     }
+
+    program_bitmap = createShader(Shaders::vertexShader, Shaders::fragmentShaderBitmap);
+    program_text = createShader(Shaders::vertexShader, Shaders::fragmentShaderText);
 
     float positions[] = {
             -1.0f, -1.0f,
@@ -46,13 +133,25 @@ void Processor::Vic2::showWindow() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, 4*2*sizeof(float), positions, GL_STATIC_DRAW);
 
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
+    glEnableVertexAttribArray(0);
+
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(float), indices, GL_STATIC_DRAW);
 
+    glUseProgram(program_bitmap);
+
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {
+        glViewport(0, 0, width, height);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glfwSwapBuffers(window);
+    });
+
     while(!glfwWindowShouldClose(window)) {
 
         glClear(GL_COLOR_BUFFER_BIT);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
