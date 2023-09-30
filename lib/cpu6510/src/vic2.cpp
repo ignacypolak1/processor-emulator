@@ -142,8 +142,11 @@ void Processor::Vic2::showWindow() {
 
     glUseProgram(program_bitmap);
 
-    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {
-        glViewport(0, 0, width, height);
+    glfwSetWindowAspectRatio(window, xResolution, yResolution);
+    glfwSetWindowSizeLimits(window, xResolution, yResolution, GLFW_DONT_CARE, GLFW_DONT_CARE);
+
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int windowWidth, int windowHeight) {
+        glViewport(0, 0, windowWidth, windowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers(window);
     });
