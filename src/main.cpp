@@ -1,10 +1,14 @@
 #include "processor.h"
-#include "GL/glew.h"
-#include <GLFW/glfw3.h>
-#include "linmath.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 
 int main() {
+
+    Processor::Processor *processor;
+    processor = new Processor::Processor();
+    processor->vic2.showWindow();
+    delete processor;
+
     return 0;
 }

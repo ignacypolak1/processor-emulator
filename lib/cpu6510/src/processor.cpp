@@ -4,11 +4,13 @@
 #include "programs.h"
 
 
-Processor::Processor::Processor() {
+Processor::Processor::Processor() : vic2((Byte*)(memory.data)) {
     resetCPU();
 }
 
-Processor::Processor::~Processor() {}
+Processor::Processor::~Processor() {
+
+}
 
 /**
 * Get current program counter value.

@@ -11,12 +11,14 @@
 #include <unordered_map>
 
 #include "memory.h"
+#include "vic2.h"
 
 namespace Processor {
 
     class Processor {
     public:
         static std::unordered_map<Byte, InstructionFunction> instructionMap;
+        Vic2 vic2;
 
     private:
         Word program_counter; // Program Counter
