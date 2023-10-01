@@ -40,19 +40,18 @@ const char* Shaders::fragmentShaderText = "#version 330 core\n"
                                           "\n"
                                           "void main()\n"
                                           "{\n"
-                                          "int charX = int(229.0 - gl_FragCoord.x) / 8;\n"
-                                          "int charY = int(gl_FragCoord.y) / 8;\n"
-                                          "int offsetX = int(gl_FragCoord.x) % 8;\n"
-                                          "int offsetY = int(gl_FragCoord.y) % 8;\n"
+                                          "    int charX = int(gl_FragCoord.x) / 8;\n"
+                                          "    int charY = int(gl_FragCoord.y) / 8;\n"
+                                          "    int offsetX = int(gl_FragCoord.x) % 8;\n"
+                                          "    int offsetY = int(gl_FragCoord.y) % 8;\n"
                                           "\n"
-                                          "float texX = (float(charX * 8 + offsetX) + 0.5) / (40 * 8.0);\n"
-                                          "float texY = (float(charY * 8 + offsetY) + 0.5) / (25 * 8.0);\n"
+                                          "    float texX = (charX * 8 + offsetX) / (40.0 * 8.0);\n"
+                                          "    float texY = 1.0 - (charY * 8 + offsetY) / (25.0 * 8.0);\n"
                                           "\n"
-                                          "float charData = texture(u_CharacterTexture, vec2(texX, texY)).r;\n"
-                                          "int byteValue = int(charData * 255.0);\n"
-                                          "int isBitSet = (byteValue >> offsetX) & 1;\n"
-                                          "color = isBitSet == 1 ? vec4(1.0, 1.0, 1.0, 1.0) : vec4(0.0, 0.0, 0.0, 1.0);\n"
+                                          "    float charData = texture(u_CharacterTexture, vec2(texX, texY)).r;\n"
+                                          "    color = vec4(charData, charData, charData, 1.0);\n"
                                           "}";
+
 
 
 unsigned int Processor::Vic2::compileShader(unsigned int type, const std::string& source) {
@@ -210,7 +209,7 @@ void Processor::Vic2::translateCharactersFromScreenMemory() {
         for(int j = 0; j < 8; j++) {
             Byte byteOfChar = characterGeneratorPtr[screenMemoryPtr[i] * 8 + j];
             for(int k = 0; k < 8; k++) {
-                translatedCharacters[i*8+j*8+k] = (byteOfChar >> (7-k)) & 1;
+                translatedCharacters[i * 64 + j * 8 + k] = ((byteOfChar >> (7-k)) & 1) * 0xFF;
             }
         }
     }
