@@ -33,12 +33,27 @@ const char* Shaders::fragmentShaderBitmap = "#version 330 core\n"
                                       "}";
 
 const char* Shaders::fragmentShaderText = "#version 330 core\n"
-                                            "#extension GL_ARB_separate_shader_objects : enable\n"
-                                            "layout(location=0) out vec4 color;\n"
-                                            "void main()\n"
-                                            "{\n"
-                                            "color = vec4(0.0, 0.0, 1.0, 1.0);\n"
-                                            "}";
+                                          "#extension GL_ARB_separate_shader_objects : enable\n"
+                                          "uniform sampler2D u_CharacterTexture;\n"
+                                          "\n"
+                                          "layout(location=0) out vec4 color;\n"
+                                          "\n"
+                                          "void main()\n"
+                                          "{\n"
+                                          "int charX = int(229.0 - gl_FragCoord.x) / 8;\n"
+                                          "int charY = int(gl_FragCoord.y) / 8;\n"
+                                          "int offsetX = int(gl_FragCoord.x) % 8;\n"
+                                          "int offsetY = int(gl_FragCoord.y) % 8;\n"
+                                          "\n"
+                                          "float texX = (float(charX * 8 + offsetX) + 0.5) / (40 * 8.0);\n"
+                                          "float texY = (float(charY * 8 + offsetY) + 0.5) / (25 * 8.0);\n"
+                                          "\n"
+                                          "float charData = texture(u_CharacterTexture, vec2(texX, texY)).r;\n"
+                                          "int byteValue = int(charData * 255.0);\n"
+                                          "int isBitSet = (byteValue >> offsetX) & 1;\n"
+                                          "color = isBitSet == 1 ? vec4(1.0, 1.0, 1.0, 1.0) : vec4(0.0, 0.0, 0.0, 1.0);\n"
+                                          "}";
+
 
 unsigned int Processor::Vic2::compileShader(unsigned int type, const std::string& source) {
     unsigned int id = glCreateShader(type);
@@ -92,6 +107,7 @@ Processor::Vic2::Vic2(Byte *memory) {
     yResolution = 200;
 
     aspectRatio = (float)xResolution/(float)yResolution;
+    std::fill(translatedCharacters, translatedCharacters+0xFA00, 0x00);
 }
 
 void Processor::Vic2::showWindow() {
@@ -117,7 +133,6 @@ void Processor::Vic2::showWindow() {
         throw std::runtime_error("Cannot initialize glew\n");
     }
 
-    program_bitmap = createShader(Shaders::vertexShader, Shaders::fragmentShaderBitmap);
     program_text = createShader(Shaders::vertexShader, Shaders::fragmentShaderText);
 
     float positions[] = {
@@ -143,7 +158,25 @@ void Processor::Vic2::showWindow() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(float), indices, GL_STATIC_DRAW);
 
-    glUseProgram(program_bitmap);
+    GLCall(glUseProgram(program_text));
+
+    unsigned int textureID;
+    GLCall(glGenTextures(1, &textureID));
+    GLCall(glBindTexture(GL_TEXTURE_2D, textureID));
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 40*8, 25*8, 0, GL_RED, GL_UNSIGNED_BYTE, translatedCharacters));
+
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+
+    GLCall(glBindTexture(GL_TEXTURE_2D, textureID));
+
+    int location = glGetUniformLocation(program_text, "u_CharacterTexture");
+    GLCall(glUniform1i(location, 0));
+
+    GLCall(glActiveTexture(GL_TEXTURE0));
+    GLCall(glBindTexture(GL_TEXTURE_2D, textureID));
 
     glfwSetWindowAspectRatio(window, xResolution, yResolution);
     glfwSetWindowSizeLimits(window, xResolution, yResolution, GLFW_DONT_CARE, GLFW_DONT_CARE);
@@ -156,10 +189,12 @@ void Processor::Vic2::showWindow() {
 
     while(!glfwWindowShouldClose(window)) {
 
-        Byte* characters = translateCharactersFromScreenMemory();
-
         glClear(GL_COLOR_BUFFER_BIT);
 
+        translateCharactersFromScreenMemory();
+        GLCall(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 40*8, 25*8, GL_RED, GL_UNSIGNED_BYTE, translatedCharacters));
+
+        glClear(GL_COLOR_BUFFER_BIT);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
@@ -170,16 +205,15 @@ void Processor::Vic2::showWindow() {
     glDeleteBuffers(1, &IBO);
 }
 
-Processor::Byte* Processor::Vic2::translateCharactersFromScreenMemory() {
-    Byte* translatedCharacters = new Byte[40*25*8*8];
-
+void Processor::Vic2::translateCharactersFromScreenMemory() {
     for(int i = 0; i < 40*25; i++) {
         for(int j = 0; j < 8; j++) {
-         translatedCharacters[i*8+j] = characterGeneratorPtr[screenMemoryPtr[i]*8+j];
+            Byte byteOfChar = characterGeneratorPtr[screenMemoryPtr[i] * 8 + j];
+            for(int k = 0; k < 8; k++) {
+                translatedCharacters[i*8+j*8+k] = (byteOfChar >> (7-k)) & 1;
+            }
         }
     }
-
-    return translatedCharacters;
 }
 
 Processor::Vic2::~Vic2() {

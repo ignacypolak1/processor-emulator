@@ -76,12 +76,13 @@ namespace Processor {
         Byte* screenMemoryPtr;
         Byte* baseAddressPtr;
         Byte* characterGeneratorPtr;
+        Byte translatedCharacters[40*8*25*8];
 
         GLFWwindow* window;
 
         unsigned int compileShader(unsigned int, const std::string&);
         unsigned int createShader(const std::string&, const std::string&);
-        Byte* translateCharactersFromScreenMemory();
+        void translateCharactersFromScreenMemory();
 
     public:
         Vic2(Byte*);
