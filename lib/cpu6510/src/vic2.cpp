@@ -40,18 +40,17 @@ const char* Shaders::fragmentShaderText = "#version 330 core\n"
                                           "\n"
                                           "void main()\n"
                                           "{\n"
-                                          "    int charX = int(gl_FragCoord.x) / 8;\n"
-                                          "    int charY = int(gl_FragCoord.y) / 8;\n"
-                                          "    int offsetX = int(gl_FragCoord.x) % 8;\n"
-                                          "    int offsetY = int(gl_FragCoord.y) % 8;\n"
+                                          "     int pixelColumn = int(gl_FragCoord.x);\n"
+                                          "     int pixelRow = int(199.0 - gl_FragCoord.y);\n"
+                                          "     int characterColumn = int(pixelColumn / 8);\n"
+                                          "     int characterRow = int(pixelRow / 8);\n"
                                           "\n"
-                                          "    float texX = (charX * 8 + offsetX) / (40.0 * 8.0);\n"
-                                          "    float texY = 1.0 - (charY * 8 + offsetY) / (25.0 * 8.0);\n"
+                                          "     int textureColumn = int((pixelColumn % 8) + (characterColumn * 64) + ((pixelRow % 8) * 8));\n"
+                                          "     int textureRow = characterRow;\n"
                                           "\n"
-                                          "    float charData = texture(u_CharacterTexture, vec2(texX, texY)).r;\n"
+                                          "    float charData = texture(u_CharacterTexture, vec2(float(textureColumn/319.0), float(textureRow/199.0))).r;\n"
                                           "    color = vec4(charData, charData, charData, 1.0);\n"
                                           "}";
-
 
 
 unsigned int Processor::Vic2::compileShader(unsigned int type, const std::string& source) {
