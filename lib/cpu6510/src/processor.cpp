@@ -9,7 +9,7 @@ Processor::Processor::Processor() : vic2((Byte*)(memory.data)) {
     resetCPU();
     writeMemoryBlock(characterSet, sizeof(characterSet)/sizeof(Byte), 0xD100); // Load character set to memory
 
-    Byte screenMemoryChars[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+    Byte screenMemoryChars[] = {3, 15, 13, 13, 15, 4, 15, 18, 5, 0, 5, 13, 21, 12, 1, 20, 15, 18, 0, 20, 5, 24, 20, 0, 13, 15, 4, 5, 0, 20, 5, 19, 20};
     writeMemoryBlock(screenMemoryChars, sizeof(screenMemoryChars)/sizeof(Byte), 0x0400); // Load some indexes to screen memory
 }
 

@@ -19,9 +19,12 @@ static bool GLLogCall(const char* function, const char* file, int line) {
 const char* Shaders::vertexShader = "#version 330 core\n"
                                     "layout(location=0) in vec4 position;\n"
                                     "\n"
+                                    "out vec2 TexCoord;\n"
+                                    "\n"
                                     "void main()\n"
                                     "{\n"
                                     "gl_Position = position;\n"
+                                    "TexCoord = vec2((position.x + 1.0) / 2.0, float(1 - ((position.y + 1.0) / 2.0)));\n"
                                     "}";
 
 const char* Shaders::fragmentShaderBitmap = "#version 330 core\n"
@@ -29,7 +32,7 @@ const char* Shaders::fragmentShaderBitmap = "#version 330 core\n"
                                       "layout(location=0) out vec4 color;\n"
                                       "void main()\n"
                                       "{\n"
-                                      "color = vec4(0.0, 0.0, 1.0, 1.0);\n"
+                                      "     color = vec4(0.0, 0.0, 1.0, 1.0);\n"
                                       "}";
 
 const char* Shaders::fragmentShaderText = "#version 330 core\n"
@@ -37,19 +40,17 @@ const char* Shaders::fragmentShaderText = "#version 330 core\n"
                                           "uniform sampler2D u_CharacterTexture;\n"
                                           "\n"
                                           "layout(location=0) out vec4 color;\n"
+                                          "in vec2 TexCoord;\n"
+                                          "vec4 textureColor;\n"
                                           "\n"
                                           "void main()\n"
                                           "{\n"
-                                          "     int pixelColumn = int(gl_FragCoord.x);\n"
-                                          "     int pixelRow = int(199.0 - gl_FragCoord.y);\n"
-                                          "     int characterColumn = int(pixelColumn / 8);\n"
-                                          "     int characterRow = int(pixelRow / 8);\n"
-                                          "\n"
-                                          "     int textureColumn = int((pixelColumn % 8) + (characterColumn * 64) + ((pixelRow % 8) * 8));\n"
-                                          "     int textureRow = characterRow;\n"
-                                          "\n"
-                                          "    float charData = texture(u_CharacterTexture, vec2(float(textureColumn/319.0), float(textureRow/199.0))).r;\n"
-                                          "    color = vec4(charData, charData, charData, 1.0);\n"
+                                          "    textureColor = vec4(texture(u_CharacterTexture, TexCoord).rrr, 1.0);\n"
+                                          "    if(textureColor.r == 0.0) {\n"
+                                          "       color = vec4(0.094, 0.094, 0.694, 1.0);\n"
+                                          "       return;\n"
+                                          "    }\n"
+                                          "    color = textureColor;\n"
                                           "}";
 
 
@@ -105,7 +106,8 @@ Processor::Vic2::Vic2(Byte *memory) {
     yResolution = 200;
 
     aspectRatio = (float)xResolution/(float)yResolution;
-    std::fill(translatedCharacters, translatedCharacters+0xFA00, 0x00);
+    std::fill(translatedCharacters, translatedCharacters+0x40, 0xFF);
+    std::fill(translatedCharacters+0x40, translatedCharacters+0xFA00, 0x00);
 }
 
 void Processor::Vic2::showWindow() {
@@ -204,11 +206,23 @@ void Processor::Vic2::showWindow() {
 }
 
 void Processor::Vic2::translateCharactersFromScreenMemory() {
-    for(int i = 0; i < 40*25; i++) {
-        for(int j = 0; j < 8; j++) {
-            Byte byteOfChar = characterGeneratorPtr[screenMemoryPtr[i] * 8 + j];
-            for(int k = 0; k < 8; k++) {
-                translatedCharacters[i * 64 + j * 8 + k] = ((byteOfChar >> (7-k)) & 1) * 0xFF;
+    int width = 40 * 8;
+    int height = 25 * 8;
+
+    Byte byteOfChar;
+    int charIndex;
+
+    for (int row = 0; row < 25; row++) {
+        for (int col = 0; col < 40; col++) {
+            charIndex = row * 40 + col;
+
+            for (int y = 0; y < 8; ++y) {
+                byteOfChar = characterGeneratorPtr[screenMemoryPtr[charIndex] * 8 + y];
+
+                for (int x = 0; x < 8; x++) {
+                    int destIndex = (row * 8 + y) * width + (col * 8 + x);
+                    translatedCharacters[destIndex] = ((byteOfChar >> (7 - x)) & 1) * 0xFF;
+                }
             }
         }
     }
